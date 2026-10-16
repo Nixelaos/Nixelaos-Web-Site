@@ -70,18 +70,6 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
     </div>
   </div>
 
-  <!-- Telemetría HUD Inferior Integrada -->
-  <div class="absolute -bottom-2 left-3 right-3 flex items-center justify-between text-[11px] font-mono pointer-events-none z-30">
-    <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200 text-slate-700 shadow-sm">
-      <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-      <span class="text-cyan-700 font-semibold text-[10px]">BIO-HYBRID:</span>
-      <span class="text-slate-600 text-[10px] font-medium">ACTIVO</span>
-    </div>
-    <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200 text-slate-600 shadow-sm text-[10px]">
-      <span>PULSOS EN VIVO:</span>
-      <span class="bio-hud-pulses text-cyan-600 font-bold">0</span>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -101,7 +89,6 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
       const somaNodesGroup = root.querySelector('.bio-soma-nodes') as SVGGElement;
       const terminalBoutonsGroup = root.querySelector('.bio-terminal-boutons') as SVGGElement;
       const canvas = root.querySelector('.bio-sparks-canvas') as HTMLCanvasElement;
-      const hudPulseCount = root.querySelector('.bio-hud-pulses') as HTMLElement;
 
       if (!tiltWrap || !tiltCard || !canvas || !dendriticForest || !axonMesh || !somaNodesGroup || !terminalBoutonsGroup) {
         return;
@@ -221,7 +208,7 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
         addNeighbor(outId, nextOutId);
       }
 
-      // 2. ARBORIZACIÓN DENDRÍTICA RAMIFICADA (12 Árboles)
+      // 2. ARBORIZACIÓN DENDRÍTICA BIOLÓGICA (12 Árboles con ramitas realistas)
       function buildDendriticArborizations() {
         dendriticForest.innerHTML = '';
         terminalBoutonsGroup.innerHTML = '';
@@ -230,63 +217,114 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
         for (let i = 0; i < 12; i++) {
           const rootNode = nodes[7 + i];
           const baseAngle = (i * 2 * Math.PI) / 12;
-          const trunkLen = 65 + (i % 2) * 10;
+          const trunkLen = 60 + (i % 2) * 8;
 
-          // Bifurcaciones orgánicas
-          const cp0X = rootNode.x + (trunkLen * 0.45) * Math.cos(baseAngle + 0.08);
-          const cp0Y = rootNode.y + (trunkLen * 0.45) * Math.sin(baseAngle + 0.08);
-          const fork0X = rootNode.x + (trunkLen * 0.6) * Math.cos(baseAngle);
-          const fork0Y = rootNode.y + (trunkLen * 0.6) * Math.sin(baseAngle);
+          // 1. Tronco principal
+          const cp0X = +(rootNode.x + (trunkLen * 0.45) * Math.cos(baseAngle + 0.07)).toFixed(2);
+          const cp0Y = +(rootNode.y + (trunkLen * 0.45) * Math.sin(baseAngle + 0.07)).toFixed(2);
+          const fork0X = +(rootNode.x + (trunkLen * 0.58) * Math.cos(baseAngle)).toFixed(2);
+          const fork0Y = +(rootNode.y + (trunkLen * 0.58) * Math.sin(baseAngle)).toFixed(2);
 
-          // Rama A
-          const angleA = baseAngle - 0.22;
-          const cpAX = fork0X + (trunkLen * 0.4) * Math.cos(angleA);
-          const cpAY = fork0Y + (trunkLen * 0.4) * Math.sin(angleA);
-          const endAX = fork0X + (trunkLen * 0.72) * Math.cos(angleA - 0.05);
-          const endAY = fork0Y + (trunkLen * 0.72) * Math.sin(angleA - 0.05);
-          const spineAX = endAX + 15 * Math.cos(angleA + 0.35);
-          const spineAY = endAY + 15 * Math.sin(angleA + 0.35);
+          // Espina en el tronco principal
+          const spineTrunkAngle = baseAngle + (i % 2 === 0 ? 0.38 : -0.38);
+          const spineTrunkX = +(cp0X + 11 * Math.cos(spineTrunkAngle)).toFixed(2);
+          const spineTrunkY = +(cp0Y + 11 * Math.sin(spineTrunkAngle)).toFixed(2);
 
-          // Rama B
+          // 2. Rama A (Izquierda)
+          const angleA = baseAngle - 0.23;
+          const cpAX = +(fork0X + (trunkLen * 0.38) * Math.cos(angleA)).toFixed(2);
+          const cpAY = +(fork0Y + (trunkLen * 0.38) * Math.sin(angleA)).toFixed(2);
+          const endAX = +(fork0X + (trunkLen * 0.68) * Math.cos(angleA - 0.04)).toFixed(2);
+          const endAY = +(fork0Y + (trunkLen * 0.68) * Math.sin(angleA - 0.04)).toFixed(2);
+
+          // Espina intermedia en Rama A
+          const midSpineAX = +(cpAX + 10 * Math.cos(angleA - 0.45)).toFixed(2);
+          const midSpineAY = +(cpAY + 10 * Math.sin(angleA - 0.45)).toFixed(2);
+
+          // Ramitas terminales que brotan de Rama A
+          const tipA1X = +(endAX + 14 * Math.cos(angleA - 0.16)).toFixed(2);
+          const tipA1Y = +(endAY + 14 * Math.sin(angleA - 0.16)).toFixed(2);
+          const tipA2X = +(endAX + 12 * Math.cos(angleA + 0.28)).toFixed(2);
+          const tipA2Y = +(endAY + 12 * Math.sin(angleA + 0.28)).toFixed(2);
+
+          // 3. Rama B (Derecha)
           const angleB = baseAngle + 0.24;
-          const cpBX = fork0X + (trunkLen * 0.4) * Math.cos(angleB);
-          const cpBY = fork0Y + (trunkLen * 0.4) * Math.sin(angleB);
-          const endBX = fork0X + (trunkLen * 0.78) * Math.cos(angleB + 0.08);
-          const endBY = fork0Y + (trunkLen * 0.78) * Math.sin(angleB + 0.08);
-          const spineBX = endBX + 16 * Math.cos(angleB - 0.4);
-          const spineBY = endBY + 16 * Math.sin(angleB - 0.4);
+          const cpBX = +(fork0X + (trunkLen * 0.38) * Math.cos(angleB)).toFixed(2);
+          const cpBY = +(fork0Y + (trunkLen * 0.38) * Math.sin(angleB)).toFixed(2);
+          const endBX = +(fork0X + (trunkLen * 0.72) * Math.cos(angleB + 0.05)).toFixed(2);
+          const endBY = +(fork0Y + (trunkLen * 0.72) * Math.sin(angleB + 0.05)).toFixed(2);
+
+          // Espina intermedia en Rama B
+          const midSpineBX = +(cpBX + 10 * Math.cos(angleB + 0.45)).toFixed(2);
+          const midSpineBY = +(cpBY + 10 * Math.sin(angleB + 0.45)).toFixed(2);
+
+          // Ramitas terminales que brotan de Rama B
+          const tipB1X = +(endBX + 12 * Math.cos(angleB - 0.28)).toFixed(2);
+          const tipB1Y = +(endBY + 12 * Math.sin(angleB - 0.28)).toFixed(2);
+          const tipB2X = +(endBX + 14 * Math.cos(angleB + 0.16)).toFixed(2);
+          const tipB2Y = +(endBY + 14 * Math.sin(angleB + 0.16)).toFixed(2);
 
           const treeSegments = [
             { from: { x: rootNode.x, y: rootNode.y }, cp: { x: cp0X, y: cp0Y }, to: { x: fork0X, y: fork0Y }, isTerminal: false },
+            { from: { x: cp0X, y: cp0Y }, to: { x: spineTrunkX, y: spineTrunkY }, isTerminal: true },
             { from: { x: fork0X, y: fork0Y }, cp: { x: cpAX, y: cpAY }, to: { x: endAX, y: endAY }, isTerminal: false },
-            { from: { x: endAX, y: endAY }, to: { x: spineAX, y: spineAY }, isTerminal: true },
+            { from: { x: cpAX, y: cpAY }, to: { x: midSpineAX, y: midSpineAY }, isTerminal: true },
+            { from: { x: endAX, y: endAY }, to: { x: tipA1X, y: tipA1Y }, isTerminal: true },
+            { from: { x: endAX, y: endAY }, to: { x: tipA2X, y: tipA2Y }, isTerminal: true },
             { from: { x: fork0X, y: fork0Y }, cp: { x: cpBX, y: cpBY }, to: { x: endBX, y: endBY }, isTerminal: false },
-            { from: { x: endBX, y: endBY }, to: { x: spineBX, y: spineBY }, isTerminal: true }
+            { from: { x: cpBX, y: cpBY }, to: { x: midSpineBX, y: midSpineBY }, isTerminal: true },
+            { from: { x: endBX, y: endBY }, to: { x: tipB1X, y: tipB1Y }, isTerminal: true },
+            { from: { x: endBX, y: endBY }, to: { x: tipB2X, y: tipB2Y }, isTerminal: true }
           ];
 
           dendriticArbors.push({ rootId: rootNode.id, segments: treeSegments });
 
-          // Trazados SVG
+          // Trazados SVG con jerarquía visual (Tronco > Ramas principales > Ramitas y espinas)
+          // 1. Tronco principal grueso
           const pathMain = document.createElementNS(SVG_NS, "path");
           pathMain.setAttribute("d", `M ${rootNode.x} ${rootNode.y} Q ${cp0X} ${cp0Y} ${fork0X} ${fork0Y}`);
           pathMain.setAttribute("stroke", axonGradId);
           pathMain.setAttribute("stroke-width", "2.8");
           dendriticForest.appendChild(pathMain);
 
+          // 2. Ramas intermedias
           const pathBranches = document.createElementNS(SVG_NS, "path");
           pathBranches.setAttribute("d",
             `M ${fork0X} ${fork0Y} Q ${cpAX} ${cpAY} ${endAX} ${endAY} ` +
-            `M ${endAX} ${endAY} L ${spineAX} ${spineAY} ` +
-            `M ${fork0X} ${fork0Y} Q ${cpBX} ${cpBY} ${endBX} ${endBY} ` +
-            `M ${endBX} ${endBY} L ${spineBX} ${spineBY}`
+            `M ${fork0X} ${fork0Y} Q ${cpBX} ${cpBY} ${endBX} ${endBY}`
           );
           pathBranches.setAttribute("stroke", axonGradId);
-          pathBranches.setAttribute("stroke-width", "1.6");
-          pathBranches.setAttribute("opacity", "0.85");
+          pathBranches.setAttribute("stroke-width", "1.8");
           dendriticForest.appendChild(pathBranches);
 
-          // Botones terminales
-          [{ x: endAX, y: endAY, r: 2.8 }, { x: spineAX, y: spineAY, r: 2.0 }, { x: endBX, y: endBY, r: 2.8 }, { x: spineBX, y: spineBY, r: 2.0 }].forEach(tp => {
+          // 3. Ramitas y espinas terminales finas
+          const pathTwigs = document.createElementNS(SVG_NS, "path");
+          pathTwigs.setAttribute("d",
+            `M ${cp0X} ${cp0Y} L ${spineTrunkX} ${spineTrunkY} ` +
+            `M ${cpAX} ${cpAY} L ${midSpineAX} ${midSpineAY} ` +
+            `M ${endAX} ${endAY} L ${tipA1X} ${tipA1Y} ` +
+            `M ${endAX} ${endAY} L ${tipA2X} ${tipA2Y} ` +
+            `M ${cpBX} ${cpBY} L ${midSpineBX} ${midSpineBY} ` +
+            `M ${endBX} ${endBY} L ${tipB1X} ${tipB1Y} ` +
+            `M ${endBX} ${endBY} L ${tipB2X} ${tipB2Y}`
+          );
+          pathTwigs.setAttribute("stroke", axonGradId);
+          pathTwigs.setAttribute("stroke-width", "1.2");
+          pathTwigs.setAttribute("opacity", "0.88");
+          dendriticForest.appendChild(pathTwigs);
+
+          // Botones sinápticos terminales (en cada una de las puntitas)
+          const terminalPoints = [
+            { x: tipA1X, y: tipA1Y, r: 2.4 },
+            { x: tipA2X, y: tipA2Y, r: 2.0 },
+            { x: midSpineAX, y: midSpineAY, r: 1.8 },
+            { x: tipB1X, y: tipB1Y, r: 2.0 },
+            { x: tipB2X, y: tipB2Y, r: 2.4 },
+            { x: midSpineBX, y: midSpineBY, r: 1.8 },
+            { x: spineTrunkX, y: spineTrunkY, r: 1.9 }
+          ];
+
+          terminalPoints.forEach(tp => {
             const c = document.createElementNS(SVG_NS, "circle");
             c.setAttribute("cx", tp.x.toFixed(1));
             c.setAttribute("cy", tp.y.toFixed(1));
@@ -389,11 +427,11 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
         if (!arbor) return;
 
         arbor.segments.forEach((seg, idx) => {
-          if (dendriticSurges.length < 24) {
+          if (dendriticSurges.length < 32) {
             dendriticSurges.push({
               segment: seg,
               progress: 0,
-              speed: (0.026 + (idx % 2) * 0.008) * pulseSpeedFactor
+              speed: (0.024 + (idx % 3) * 0.006) * pulseSpeedFactor
             });
           }
         });
@@ -606,10 +644,6 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
             node.haloElement.setAttribute("opacity", (node.excitation * 0.75).toFixed(2));
           }
         });
-
-        if (hudPulseCount) {
-          hudPulseCount.textContent = (pulses.length + dendriticSurges.length).toString();
-        }
 
         animId = requestAnimationFrame(loop);
       }
