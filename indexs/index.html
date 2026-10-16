@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<html lang="es" class="h-full bg-white text-slate-800">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Bio-Neuronal - Arborización Dendrítica Realista</title>
+    <title>Red Bio-Neuronal - Flujo Multidireccional Continuo</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -20,14 +20,15 @@
     </style>
 </head>
 
-<body class="h-full flex flex-col font-sans overflow-x-hidden selection:bg-cyan-600 selection:text-white">
+<body
+    class="h-full flex flex-col font-sans overflow-x-hidden bg-white text-slate-800 selection:bg-cyan-500 selection:text-white">
 
     <!-- BARRA SUPERIOR HUD -->
     <header
-        class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-40">
+        class="border-b border-slate-200 bg-white/95 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-xs">
         <div class="flex items-center gap-3">
             <div
-                class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center shadow-md shadow-cyan-500/20">
                 <svg viewBox="0 0 24 24" class="w-5 h-5 text-white fill-none stroke-current" stroke-width="2">
                     <circle cx="12" cy="12" r="3" fill="currentColor" />
                     <path
@@ -35,26 +36,26 @@
                 </svg>
             </div>
             <div>
-                <h1 class="text-sm font-bold tracking-wide uppercase text-slate-100 flex items-center gap-2">
+                <h1 class="text-sm font-bold tracking-wide uppercase text-slate-900 flex items-center gap-2">
                     Bio-Neural Network
                     <span
-                        class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">DENDRITAS
-                        REALES &bull; 60 FPS</span>
+                        class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-200 font-mono">FLUJO
+                        CONSTANTE &bull; MULTIDIRECCIONAL</span>
                 </h1>
-                <p class="text-xs text-slate-400">Arborización dicotómica, espinas y flujo eléctrico constante</p>
+                <p class="text-xs text-slate-500">Pulsos continuos en todas direcciones con control de ciclo de vida</p>
             </div>
         </div>
 
         <div class="flex items-center gap-2.5">
             <button id="btn-fire-burst"
-                class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 shadow-md shadow-cyan-900/40 transition-all active:scale-95">
+                class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 shadow-md shadow-cyan-500/20 transition-all active:scale-95">
                 <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
                 DESCARGA LOCAL
             </button>
 
             <button id="btn-open-modal"
-                class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 transition-all active:scale-95">
-                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 transition-all active:scale-95">
+                <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
@@ -64,24 +65,24 @@
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-white">
 
-        <!-- ESCENARIO CENTRAL -->
+        <!-- ESCENARIO PRINCIPAL: FIGURA BIO-ELECTRÓNICA A LA IZQUIERDA -->
         <section
-            class="lg:col-span-8 flex flex-col relative items-center justify-center p-6 transition-colors duration-500 overflow-hidden"
+            class="lg:col-span-8 flex flex-col relative items-center lg:items-start justify-center p-6 lg:pl-16 xl:pl-24 transition-colors duration-500 overflow-hidden bg-white"
             id="canvas-stage">
 
-            <!-- Fondo Blanco Lab / Modo Claro -->
+            <!-- Fondo Blanco Lab Toda la Página -->
             <div id="stage-backdrop" class="absolute inset-0 bg-[#ffffff] transition-colors duration-500"></div>
 
             <!-- Retícula Micro-Electrónica -->
             <div
-                class="absolute inset-0 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:28px_28px] opacity-15 pointer-events-none">
+                class="absolute inset-0 bg-[radial-gradient(#0284c7_1.2px,transparent_1.2px)] [background-size:28px_28px] opacity-15 pointer-events-none">
             </div>
 
-            <!-- TARJETA 3D INTERACTIVA -->
+            <!-- TARJETA 3D INTERACTIVA: POSICIONADA A LA IZQUIERDA -->
             <div id="kinetic-card"
-                class="relative z-10 w-80 h-80 sm:w-[480px] sm:h-[480px] flex items-center justify-center select-none cursor-pointer"
+                class="relative z-10 w-80 h-80 sm:w-[460px] sm:h-[460px] flex items-center justify-center select-none cursor-pointer"
                 style="perspective: 1200px;">
 
                 <!-- Halo Bioluminiscente Dinámico -->
@@ -93,9 +94,9 @@
                 <div id="tilt-wrapper"
                     class="w-full h-full relative flex items-center justify-center transition-transform duration-100 ease-out will-change-transform">
 
-                    <!-- SVG: RED NEURONAL CON ARBORIZACIÓN DENDRÍTICA -->
-                    <svg viewBox="0 0 640 640"
-                        class="w-full h-full filter drop-shadow-[0_12px_28px_rgba(2,132,199,0.25)] relative z-10">
+                    <!-- SVG: RED NEURONAL ESTÁTICA CON ARBORIZACIÓN -->
+                    <svg viewBox="0 0 600 600"
+                        class="w-full h-full filter drop-shadow-[0_12px_28px_rgba(2,132,199,0.22)] relative z-10">
                         <defs>
                             <radialGradient id="coreGrad" cx="35%" cy="35%" r="65%">
                                 <stop offset="0%" stop-color="#ffffff" />
@@ -115,15 +116,9 @@
                                 <stop offset="50%" stop-color="#2563eb" />
                                 <stop offset="100%" stop-color="#0ea5e9" />
                             </linearGradient>
-
-                            <linearGradient id="dendriteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#0284c7" />
-                                <stop offset="65%" stop-color="#00f0ff" />
-                                <stop offset="100%" stop-color="#38bdf8" />
-                            </linearGradient>
                         </defs>
 
-                        <!-- 1. ARBORIZACIÓN DENDRÍTICA REALISTA (3 NIVELES DE RAMIFICACIÓN) -->
+                        <!-- 1. ARBORIZACIÓN DENDRÍTICA EXTERIOR -->
                         <g id="dendritic-forest" stroke-linecap="round" fill="none"></g>
 
                         <!-- 2. RED AXÓNICA INTERNA -->
@@ -133,8 +128,8 @@
                         <!-- 3. CUERPOS CELULARES / SOMAS PALPITANTES -->
                         <g id="soma-nodes"></g>
 
-                        <!-- 4. BOTONES SINÁPTICOS TERMINALES (BULBOS) -->
-                        <g id="terminal-boutons" fill="#00f0ff" stroke="#ffffff" stroke-width="0.8"></g>
+                        <!-- 4. BOTONES SINÁPTICOS TERMINALES -->
+                        <g id="terminal-boutons" fill="#00f0ff" stroke="#ffffff" stroke-width="1"></g>
                     </svg>
 
                     <!-- CANVAS PARA EL FLUJO ELÉCTRICO CONTINUO A 60 FPS -->
@@ -147,46 +142,46 @@
             <div
                 class="absolute bottom-5 left-6 right-6 flex items-center justify-between text-xs font-mono pointer-events-none">
                 <div
-                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-slate-300">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>FLUJO: <strong id="hud-flow-status" class="text-cyan-300 font-semibold">ACTIVO
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200 text-slate-700 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                    <span>FLUJO: <strong id="hud-flow-status" class="text-cyan-700 font-semibold">ACTIVO
                             CONSTANTE</strong></span>
-                    <span class="text-slate-600">|</span>
-                    <span>PULSOS EN VIVO: <span id="hud-pulse-count" class="text-cyan-400 font-semibold">0</span></span>
+                    <span class="text-slate-300">|</span>
+                    <span>PULSOS EN VIVO: <span id="hud-pulse-count" class="text-cyan-600 font-semibold">0</span></span>
                 </div>
 
                 <div
-                    class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-slate-300">
-                    <span>CANOPIA: <span class="text-cyan-400 font-semibold">DICOTÓMICA</span></span>
-                    <span class="text-slate-600">|</span>
-                    <span>TILT: <span id="hud-tilt" class="text-cyan-400">0.0° / 0.0°</span></span>
+                    class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200 text-slate-700 shadow-sm">
+                    <span>DIRECCIÓN: <span class="text-cyan-700 font-semibold">OMNIDIRECCIONAL</span></span>
+                    <span class="text-slate-300">|</span>
+                    <span>TILT: <span id="hud-tilt" class="text-cyan-600">0.0° / 0.0°</span></span>
                 </div>
             </div>
         </section>
 
         <!-- PANEL DE CONTROL LATERAL -->
         <aside
-            class="lg:col-span-4 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 p-6 flex flex-col gap-6 overflow-y-auto max-h-screen">
+            class="lg:col-span-4 bg-slate-50/90 border-t lg:border-t-0 lg:border-l border-slate-200 p-6 flex flex-col gap-6 overflow-y-auto max-h-screen text-slate-800">
 
             <div>
-                <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-1">Actividad Continua</h2>
-                <p class="text-xs text-slate-400">Control de densidad y velocidad del flujo eléctrico constante.</p>
+                <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-700 mb-1">Actividad Continua</h2>
+                <p class="text-xs text-slate-500">Control de densidad y velocidad del flujo eléctrico constante.</p>
             </div>
 
             <!-- Sliders de Control -->
-            <div class="space-y-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+            <div class="space-y-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
                 <!-- Densidad de Emisión Constante -->
                 <div>
                     <div class="flex justify-between items-center text-xs mb-1.5">
-                        <label for="input-emission-rate" class="font-medium text-slate-200 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        <label for="input-emission-rate" class="font-medium text-slate-700 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
                             Densidad de Emisión Continua
                         </label>
-                        <span id="txt-emission-rate" class="font-mono text-cyan-400 font-bold">Media</span>
+                        <span id="txt-emission-rate" class="font-mono text-cyan-600 font-bold">Media</span>
                     </div>
                     <input type="range" id="input-emission-rate" min="3" max="25" value="10"
-                        class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer slider-thumb">
-                    <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                        class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                    <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
                         <span>Sutil</span>
                         <span>Estándar</span>
                         <span>Intensa</span>
@@ -196,67 +191,67 @@
                 <!-- Velocidad de Conducción Eléctrica -->
                 <div>
                     <div class="flex justify-between items-center text-xs mb-1.5">
-                        <label for="input-pulse-speed" class="font-medium text-slate-200 flex items-center gap-1.5">
+                        <label for="input-pulse-speed" class="font-medium text-slate-700 flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                             Velocidad de Conducción
                         </label>
-                        <span id="txt-pulse-speed" class="font-mono text-cyan-400 font-bold">1.0x</span>
+                        <span id="txt-pulse-speed" class="font-mono text-cyan-600 font-bold">1.0x</span>
                     </div>
                     <input type="range" id="input-pulse-speed" min="5" max="25" value="10"
-                        class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
                 </div>
 
                 <!-- Intensidad de Palpitación Nodal -->
                 <div>
                     <div class="flex justify-between items-center text-xs mb-1.5">
-                        <label for="input-pulse-intensity" class="font-medium text-slate-200 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                        <label for="input-pulse-intensity" class="font-medium text-slate-700 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
                             Palpitación de Nodos
                         </label>
-                        <span id="txt-pulse-intensity" class="font-mono text-cyan-400 font-bold">+65%</span>
+                        <span id="txt-pulse-intensity" class="font-mono text-cyan-600 font-bold">+65%</span>
                     </div>
                     <input type="range" id="input-pulse-intensity" min="10" max="100" value="65"
-                        class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
                 </div>
 
                 <!-- Botón de Pausa de Emisión -->
                 <div class="pt-2">
                     <button id="btn-toggle-emission"
-                        class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition-colors">
+                        class="w-full py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">
                         Pausar Emisión Continua
                     </button>
                 </div>
             </div>
 
             <!-- Configuración de Entorno & Tilt -->
-            <div class="space-y-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Entorno & Tilt 3D</h3>
+            <div class="space-y-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-700">Entorno & Tilt 3D</h3>
 
                 <!-- Sensibilidad 3D Tilt -->
                 <div>
                     <div class="flex justify-between items-center text-xs mb-1.5">
-                        <label for="input-tilt-sens" class="text-slate-300">Sensibilidad Tilt 3D</label>
-                        <span id="txt-tilt-sens" class="font-mono text-cyan-400 font-bold">16°</span>
+                        <label for="input-tilt-sens" class="text-slate-700">Sensibilidad Tilt 3D</label>
+                        <span id="txt-tilt-sens" class="font-mono text-cyan-600 font-bold">16°</span>
                     </div>
                     <input type="range" id="input-tilt-sens" min="0" max="35" value="16"
-                        class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
                 </div>
 
                 <!-- Selector de Fondo -->
                 <div>
-                    <label class="text-xs text-slate-300 block mb-2">Fondo del Escenario</label>
+                    <label class="text-xs text-slate-700 block mb-2">Fondo del Escenario</label>
                     <div class="grid grid-cols-3 gap-2">
                         <button data-bg="#ffffff"
-                            class="btn-bg-opt active ring-2 ring-cyan-500 px-3 py-2 rounded-lg bg-white text-slate-800 text-xs font-semibold shadow-xs">
+                            class="btn-bg-opt active ring-2 ring-cyan-500 px-3 py-2 rounded-lg bg-white text-slate-800 text-xs font-semibold shadow-xs border border-slate-200">
                             Blanco Lab
+                        </button>
+                        <button data-bg="#f8fafc"
+                            class="btn-bg-opt px-3 py-2 rounded-lg bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200">
+                            Gris Claro
                         </button>
                         <button data-bg="#0b1329"
                             class="btn-bg-opt px-3 py-2 rounded-lg bg-slate-900 text-slate-200 text-xs font-semibold">
                             Neuro-Dark
-                        </button>
-                        <button data-bg="#020617"
-                            class="btn-bg-opt px-3 py-2 rounded-lg bg-slate-950 text-slate-400 text-xs font-semibold border border-slate-800">
-                            Vacío
                         </button>
                     </div>
                 </div>
@@ -265,7 +260,7 @@
         </aside>
     </main>
 
-    <!-- MODAL DE EXPORTACIÓN -->
+    <!-- MODAL DE EXPORTACIÓN (Sin riesgo de cortes) -->
     <div id="export-modal"
         class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
         <div
@@ -273,7 +268,7 @@
 
             <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
                 <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                    <span>Componente Bio-Neuronal (Dendritas Realistas)</span>
+                    <span>Componente Bio-Neuronal (Flujo Constante Omnidireccional)</span>
                 </h3>
 
                 <div class="flex items-center gap-1 bg-slate-800 p-1 rounded-lg">
@@ -298,8 +293,8 @@
             </div>
 
             <div class="px-6 py-3.5 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between">
-                <span class="text-xs text-slate-400">Totalmente autónomo: arborización en 3 niveles, sin bucles
-                    infinitos.</span>
+                <span class="text-xs text-slate-400">Totalmente autónomo: flujo multidireccional con ciclo de vida
+                    controlado.</span>
                 <button id="btn-copy-code"
                     class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold tracking-wider flex items-center gap-2 transition-all">
                     <span id="copy-text">COPIAR AL PORTAPAPELES</span>
@@ -308,11 +303,11 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE FLUJO MULTIDIRECCIONAL Y ARBORIZACIÓN REALISTA -->
+    <!-- SCRIPT DE FLUJO MULTIDIRECCIONAL ACOTADO Y 60 FPS -->
     <script>
         (function () {
             const SVG_NS = "http://www.w3.org/2000/svg";
-            const CENTER = { x: 320, y: 320 };
+            const CENTER = { x: 300, y: 300 };
 
             // Elementos DOM
             const tiltWrapper = document.getElementById("tilt-wrapper");
@@ -368,7 +363,7 @@
 
             // Anillo Interno (1 a 6)
             const innerCount = 6;
-            const innerR = 78;
+            const innerR = 76;
             for (let i = 0; i < innerCount; i++) {
                 const a = (i * 2 * Math.PI) / innerCount - Math.PI / 6;
                 nodes.push({
@@ -385,7 +380,7 @@
 
             // Anillo Exterior (7 a 18)
             const outerCount = 12;
-            const outerR = 152;
+            const outerR = 146;
             for (let i = 0; i < outerCount; i++) {
                 const a = (i * 2 * Math.PI) / outerCount;
                 nodes.push({
@@ -400,10 +395,15 @@
                 });
             }
 
-            // Conexiones del grafo interno
+            // Conexiones bidireccionales del grafo
+            // 1. Centro <-> Internos (Hacia afuera y hacia adentro)
             for (let i = 1; i <= 6; i++) {
                 axonLines.push({ from: 0, to: i });
                 addNeighbor(0, i);
+            }
+
+            // 2. Internos entre sí (Laterales y diagonales)
+            for (let i = 1; i <= 6; i++) {
                 const next = i === 6 ? 1 : i + 1;
                 const diagonal = ((i + 1) % 6) + 1;
                 axonLines.push({ from: i, to: next });
@@ -412,6 +412,7 @@
                 addNeighbor(i, diagonal);
             }
 
+            // 3. Internos <-> Exteriores
             for (let i = 0; i < 12; i++) {
                 const outId = 7 + i;
                 const inId = 1 + (Math.floor(i / 2) % 6);
@@ -425,12 +426,13 @@
                     addNeighbor(nextInId, outId);
                 }
 
+                // Anillo exterior lateral entre vecinos
                 const nextOutId = 7 + ((i + 1) % 12);
                 axonLines.push({ from: outId, to: nextOutId });
                 addNeighbor(outId, nextOutId);
             }
 
-            // 2. ARBORIZACIÓN DENDRÍTICA REALISTA (3 NIVELES DE RAMIFICACIÓN Y ADELGAZAMIENTO)
+            // 2. ARBORIZACIÓN DENDRÍTICA RAMIFICADA (12 Árboles)
             function buildDendriticArborizations() {
                 dendriticForest.innerHTML = '';
                 terminalBoutonsGroup.innerHTML = '';
@@ -439,125 +441,63 @@
                 for (let i = 0; i < 12; i++) {
                     const rootNode = nodes[7 + i];
                     const baseAngle = (i * 2 * Math.PI) / 12;
-                    const treeSegments = [];
+                    const trunkLen = 65 + (i % 2) * 10;
 
-                    // Parámetros de escala orgánica
-                    const trunkLen = 42 + (i % 3) * 6;
-                    const secLen = 32 + (i % 2) * 5;
-                    const twigLen = 22 + (i % 2) * 4;
+                    // Bifurcaciones orgánicas
+                    const cp0X = rootNode.x + (trunkLen * 0.45) * Math.cos(baseAngle + 0.08);
+                    const cp0Y = rootNode.y + (trunkLen * 0.45) * Math.sin(baseAngle + 0.08);
+                    const fork0X = rootNode.x + (trunkLen * 0.6) * Math.cos(baseAngle);
+                    const fork0Y = rootNode.y + (trunkLen * 0.6) * Math.sin(baseAngle);
 
-                    // NIVEL 1: Tronco dendrítico principal (Curvatura cónica)
-                    const curveBias = (i % 2 === 0 ? 1 : -1) * 0.12;
-                    const cp1X = rootNode.x + (trunkLen * 0.5) * Math.cos(baseAngle + curveBias);
-                    const cp1Y = rootNode.y + (trunkLen * 0.5) * Math.sin(baseAngle + curveBias);
-                    const fork1X = rootNode.x + trunkLen * Math.cos(baseAngle + curveBias * 0.4);
-                    const fork1Y = rootNode.y + trunkLen * Math.sin(baseAngle + curveBias * 0.4);
+                    // Rama A
+                    const angleA = baseAngle - 0.22;
+                    const cpAX = fork0X + (trunkLen * 0.4) * Math.cos(angleA);
+                    const cpAY = fork0Y + (trunkLen * 0.4) * Math.sin(angleA);
+                    const endAX = fork0X + (trunkLen * 0.72) * Math.cos(angleA - 0.05);
+                    const endAY = fork0Y + (trunkLen * 0.72) * Math.sin(angleA - 0.05);
+                    const spineAX = endAX + 15 * Math.cos(angleA + 0.35);
+                    const spineAY = endAY + 15 * Math.sin(angleA + 0.35);
 
-                    treeSegments.push({
-                        from: { x: rootNode.x, y: rootNode.y },
-                        cp: { x: cp1X, y: cp1Y },
-                        to: { x: fork1X, y: fork1Y },
-                        isTerminal: false
-                    });
+                    // Rama B
+                    const angleB = baseAngle + 0.24;
+                    const cpBX = fork0X + (trunkLen * 0.4) * Math.cos(angleB);
+                    const cpBY = fork0Y + (trunkLen * 0.4) * Math.sin(angleB);
+                    const endBX = fork0X + (trunkLen * 0.78) * Math.cos(angleB + 0.08);
+                    const endBY = fork0Y + (trunkLen * 0.78) * Math.sin(angleB + 0.08);
+                    const spineBX = endBX + 16 * Math.cos(angleB - 0.4);
+                    const spineBY = endBY + 16 * Math.sin(angleB - 0.4);
 
-                    // NIVEL 2: Bifurcación dicotómica (Rama Izquierda y Derecha)
-                    const aLeft = baseAngle - 0.28;
-                    const cp2LX = fork1X + (secLen * 0.45) * Math.cos(aLeft + 0.08);
-                    const cp2LY = fork1Y + (secLen * 0.45) * Math.sin(aLeft + 0.08);
-                    const fork2LX = fork1X + secLen * Math.cos(aLeft);
-                    const fork2LY = fork1Y + secLen * Math.sin(aLeft);
-
-                    const aRight = baseAngle + 0.30;
-                    const cp2RX = fork1X + (secLen * 0.45) * Math.cos(aRight - 0.08);
-                    const cp2RY = fork1Y + (secLen * 0.45) * Math.sin(aRight - 0.08);
-                    const fork2RX = fork1X + secLen * Math.cos(aRight);
-                    const fork2RY = fork1Y + secLen * Math.sin(aRight);
-
-                    treeSegments.push(
-                        { from: { x: fork1X, y: fork1Y }, cp: { x: cp2LX, y: cp2LY }, to: { x: fork2LX, y: fork2LY }, isTerminal: false },
-                        { from: { x: fork1X, y: fork1Y }, cp: { x: cp2RX, y: cp2RY }, to: { x: fork2RX, y: fork2RY }, isTerminal: false }
-                    );
-
-                    // NIVEL 3: Ramitas terminales y espinas dendríticas
-                    // Ramas de la izquierda
-                    const aL1 = aLeft - 0.18;
-                    const endL1X = fork2LX + twigLen * Math.cos(aL1);
-                    const endL1Y = fork2LY + twigLen * Math.sin(aL1);
-
-                    const aL2 = aLeft + 0.22;
-                    const endL2X = fork2LX + (twigLen * 0.85) * Math.cos(aL2);
-                    const endL2Y = fork2LY + (twigLen * 0.85) * Math.sin(aL2);
-
-                    const spineLX = fork2LX + 14 * Math.cos(aLeft - 0.55);
-                    const spineLY = fork2LY + 14 * Math.sin(aLeft - 0.55);
-
-                    // Ramas de la derecha
-                    const aR1 = aRight - 0.20;
-                    const endR1X = fork2RX + (twigLen * 0.85) * Math.cos(aR1);
-                    const endR1Y = fork2RX + (twigLen * 0.85) * Math.sin(aR1);
-
-                    const aR2 = aRight + 0.24;
-                    const endR2X = fork2RX + twigLen * Math.cos(aR2);
-                    const endR2Y = fork2RX + twigLen * Math.sin(aR2);
-
-                    const spineRX = fork2RX + 14 * Math.cos(aRight + 0.55);
-                    const spineRY = fork2RX + 14 * Math.sin(aRight + 0.55);
-
-                    treeSegments.push(
-                        { from: { x: fork2LX, y: fork2LY }, to: { x: endL1X, y: endL1Y }, isTerminal: true },
-                        { from: { x: fork2LX, y: fork2LY }, to: { x: endL2X, y: endL2Y }, isTerminal: true },
-                        { from: { x: fork2LX, y: fork2LY }, to: { x: spineLX, y: spineLY }, isTerminal: true },
-                        { from: { x: fork2RX, y: fork2RY }, to: { x: endR1X, y: endR1Y }, isTerminal: true },
-                        { from: { x: fork2RX, y: fork2RY }, to: { x: endR2X, y: endR2Y }, isTerminal: true },
-                        { from: { x: fork2RX, y: fork2RY }, to: { x: spineRX, y: spineRY }, isTerminal: true }
-                    );
+                    const treeSegments = [
+                        { from: { x: rootNode.x, y: rootNode.y }, cp: { x: cp0X, y: cp0Y }, to: { x: fork0X, y: fork0Y }, isTerminal: false },
+                        { from: { x: fork0X, y: fork0Y }, cp: { x: cpAX, y: cpAY }, to: { x: endAX, y: endAY }, isTerminal: false },
+                        { from: { x: endAX, y: endAY }, to: { x: spineAX, y: spineAY }, isTerminal: true },
+                        { from: { x: fork0X, y: fork0Y }, cp: { x: cpBX, y: cpBY }, to: { x: endBX, y: endBY }, isTerminal: false },
+                        { from: { x: endBX, y: endBY }, to: { x: spineBX, y: spineBY }, isTerminal: true }
+                    ];
 
                     dendriticArbors.push({ rootId: rootNode.id, segments: treeSegments });
 
-                    // RENDERIZADO SVG CON TAPERED STROKE (De grueso a fino)
-                    // Nivel 1: Tronco principal grueso
-                    const pTrunk = document.createElementNS(SVG_NS, "path");
-                    pTrunk.setAttribute("d", `M ${rootNode.x.toFixed(1)} ${rootNode.y.toFixed(1)} Q ${cp1X.toFixed(1)} ${cp1Y.toFixed(1)} ${fork1X.toFixed(1)} ${fork1Y.toFixed(1)}`);
-                    pTrunk.setAttribute("stroke", "url(#dendriteGrad)");
-                    pTrunk.setAttribute("stroke-width", "3.4");
-                    dendriticForest.appendChild(pTrunk);
+                    // Trazados SVG
+                    const pathMain = document.createElementNS(SVG_NS, "path");
+                    pathMain.setAttribute("d", `M ${rootNode.x} ${rootNode.y} Q ${cp0X} ${cp0Y} ${fork0X} ${fork0Y}`);
+                    pathMain.setAttribute("stroke", "url(#axonLineGrad)");
+                    pathMain.setAttribute("stroke-width", "2.8");
+                    dendriticForest.appendChild(pathMain);
 
-                    // Nivel 2: Ramas secundarias
-                    const pSec = document.createElementNS(SVG_NS, "path");
-                    pSec.setAttribute("d",
-                        `M ${fork1X.toFixed(1)} ${fork1Y.toFixed(1)} Q ${cp2LX.toFixed(1)} ${cp2LY.toFixed(1)} ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} ` +
-                        `M ${fork1X.toFixed(1)} ${fork1Y.toFixed(1)} Q ${cp2RX.toFixed(1)} ${cp2RY.toFixed(1)} ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)}`
+                    const pathBranches = document.createElementNS(SVG_NS, "path");
+                    pathBranches.setAttribute("d",
+                        `M ${fork0X} ${fork0Y} Q ${cpAX} ${cpAY} ${endAX} ${endAY} ` +
+                        `M ${endAX} ${endAY} L ${spineAX} ${spineAY} ` +
+                        `M ${fork0X} ${fork0Y} Q ${cpBX} ${cpBY} ${endBX} ${endBY} ` +
+                        `M ${endBX} ${endBY} L ${spineBX} ${spineBY}`
                     );
-                    pSec.setAttribute("stroke", "url(#dendriteGrad)");
-                    pSec.setAttribute("stroke-width", "2.2");
-                    dendriticForest.appendChild(pSec);
+                    pathBranches.setAttribute("stroke", "url(#axonLineGrad)");
+                    pathBranches.setAttribute("stroke-width", "1.6");
+                    pathBranches.setAttribute("opacity", "0.85");
+                    dendriticForest.appendChild(pathBranches);
 
-                    // Nivel 3: Ramitas terminales y espinas finas
-                    const pTwigs = document.createElementNS(SVG_NS, "path");
-                    pTwigs.setAttribute("d",
-                        `M ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} L ${endL1X.toFixed(1)} ${endL1Y.toFixed(1)} ` +
-                        `M ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} L ${endL2X.toFixed(1)} ${endL2Y.toFixed(1)} ` +
-                        `M ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} L ${spineLX.toFixed(1)} ${spineLY.toFixed(1)} ` +
-                        `M ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)} L ${endR1X.toFixed(1)} ${endR1Y.toFixed(1)} ` +
-                        `M ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)} L ${endR2X.toFixed(1)} ${endR2Y.toFixed(1)} ` +
-                        `M ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)} L ${spineRX.toFixed(1)} ${spineRY.toFixed(1)}`
-                    );
-                    pTwigs.setAttribute("stroke", "url(#dendriteGrad)");
-                    pTwigs.setAttribute("stroke-width", "1.2");
-                    pTwigs.setAttribute("opacity", "0.85");
-                    dendriticForest.appendChild(pTwigs);
-
-                    // Botones sinápticos terminales (Bulbos en las puntas)
-                    const terminalPoints = [
-                        { x: endL1X, y: endL1Y, r: 2.6 },
-                        { x: endL2X, y: endL2Y, r: 2.2 },
-                        { x: spineLX, y: spineLY, r: 1.8 },
-                        { x: endR1X, y: endR1Y, r: 2.2 },
-                        { x: endR2X, y: endR2Y, r: 2.6 },
-                        { x: spineRX, y: spineRY, r: 1.8 }
-                    ];
-
-                    terminalPoints.forEach(tp => {
+                    // Botones terminales
+                    [{ x: endAX, y: endAY, r: 2.8 }, { x: spineAX, y: spineAY, r: 2.0 }, { x: endBX, y: endBY, r: 2.8 }, { x: spineBX, y: spineBY, r: 2.0 }].forEach(tp => {
                         const c = document.createElementNS(SVG_NS, "circle");
                         c.setAttribute("cx", tp.x.toFixed(1));
                         c.setAttribute("cy", tp.y.toFixed(1));
@@ -568,7 +508,7 @@
                 }
             }
 
-            // 3. MALLA AXÓNICA INTERNA
+            // 3. MALLA AXÓNICA VISUAL
             function drawAxonMesh() {
                 axonMesh.innerHTML = '';
                 axonLines.forEach(l => {
@@ -583,7 +523,7 @@
                 });
             }
 
-            // 4. CREAR NODOS SOMA PALPITANTES
+            // 4. CREAR NODOS SVG PALPITANTES
             function createSomaElements() {
                 somaNodesGroup.innerHTML = '';
                 nodes.forEach(node => {
@@ -615,12 +555,13 @@
             const dendriticSurges = [];
             const microArcs = [];
 
-            const MAX_ACTIVE_PULSES = 28;
+            const MAX_ACTIVE_PULSES = 28; // Tope estricto de seguridad para garantizar 60 FPS
             let emissionRate = 10;
             let pulseSpeedFactor = 1.0;
             let pulseIntensityMultiplier = 0.65;
             let continuousEmissionActive = true;
 
+            // Inyectar un pulso bioeléctrico entre dos nodos
             function spawnAxonPulse(fromId, toId, hopsRemaining, prevNodeId = -1) {
                 if (pulses.length >= MAX_ACTIVE_PULSES) return;
 
@@ -634,16 +575,17 @@
                 });
             }
 
+            // Inyectar descarga hacia las ramas dendríticas
             function spawnDendriticSurge(outerNodeId) {
                 const arbor = dendriticArbors.find(a => a.rootId === outerNodeId);
                 if (!arbor) return;
 
                 arbor.segments.forEach((seg, idx) => {
-                    if (dendriticSurges.length < 32) {
+                    if (dendriticSurges.length < 24) {
                         dendriticSurges.push({
                             segment: seg,
                             progress: 0,
-                            speed: (0.024 + (idx % 3) * 0.006) * pulseSpeedFactor
+                            speed: (0.026 + (idx % 2) * 0.008) * pulseSpeedFactor
                         });
                     }
                 });
@@ -651,7 +593,7 @@
 
             function emitMicroArc(x, y) {
                 const angle = Math.random() * Math.PI * 2;
-                const reach = 8 + Math.random() * 16;
+                const reach = 10 + Math.random() * 18;
                 microArcs.push({
                     x1: x, y1: y,
                     x2: x + Math.cos(angle) * reach,
@@ -661,6 +603,7 @@
                 });
             }
 
+            // Disparar ráfaga local (desde un nodo o centro) en todas direcciones
             function fireLocalBurst(startNodeId) {
                 const startNode = nodes[startNodeId] || nodes[0];
                 startNode.excitation = 1.6;
@@ -680,10 +623,11 @@
 
             document.getElementById("btn-fire-burst").addEventListener("click", () => fireLocalBurst(0));
 
+            // Click interactivo en nodos o cerca de ellos
             kineticCard.addEventListener("click", (e) => {
                 const rect = kineticCard.getBoundingClientRect();
-                const clickX = (e.clientX - rect.left) * (640 / rect.width);
-                const clickY = (e.clientY - rect.top) * (640 / rect.height);
+                const clickX = (e.clientX - rect.left) * (600 / rect.width);
+                const clickY = (e.clientY - rect.top) * (600 / rect.height);
 
                 let closestNode = null;
                 let minDist = 99999;
@@ -696,7 +640,7 @@
                     }
                 });
 
-                if (closestNode && minDist < 80) {
+                if (closestNode && minDist < 75) {
                     fireLocalBurst(closestNode.id);
                 } else {
                     fireLocalBurst(0);
@@ -721,28 +665,30 @@
                 lastTime = now;
 
                 const rect = kineticCard.getBoundingClientRect();
-                const scale = rect.width / 640;
+                const scale = rect.width / 600;
 
                 ctx.clearRect(0, 0, rect.width, rect.height);
 
-                // A. EMISIÓN CONTINUA
+                // A. GENERADOR DE FLUJO CONTINUO CONTROLADO
                 if (continuousEmissionActive && emissionRate > 0) {
                     const emissionInterval = Math.max(120, 1800 - emissionRate * 70);
                     if (now - lastEmissionTime >= emissionInterval) {
                         lastEmissionTime = now;
 
+                        // Elegir un nodo de origen aleatorio (núcleo, interior o exterior)
                         const randomOriginNode = nodes[Math.floor(Math.random() * nodes.length)];
                         const neighbors = neighborsMap[randomOriginNode.id] || [];
 
                         if (neighbors.length > 0) {
                             const randomTarget = neighbors[Math.floor(Math.random() * neighbors.length)];
+                            // Se le asigna entre 2 y 4 saltos máximos para evitar bucles infinitos
                             const hops = Math.floor(2 + Math.random() * 3);
                             spawnAxonPulse(randomOriginNode.id, randomTarget, hops, randomOriginNode.id);
                         }
                     }
                 }
 
-                // B. PULSOS AXÓNICOS MULTIDIRECCIONALES
+                // B. ACTUALIZAR Y DIBUJAR PULSOS AXÓNICOS (MULTIDIRECCIONALES)
                 for (let i = pulses.length - 1; i >= 0; i--) {
                     const p = pulses[i];
                     p.progress += p.speed;
@@ -761,20 +707,27 @@
                     ctx.fill();
                     ctx.shadowBlur = 0;
 
+                    // Llegada al nodo destino
                     if (p.progress >= 1.0) {
                         nTo.excitation = Math.min(nTo.excitation + 0.6, 1.5);
 
+                        // ¿Le quedan saltos al pulso?
                         if (p.hopsRemaining > 1) {
+                            // Buscar vecinos elegibles EXCLUYENDO de donde acaba de venir para evitar ping-pong/bucles
                             const allNeighbors = neighborsMap[nTo.id] || [];
                             const eligible = allNeighbors.filter(id => id !== p.fromId);
 
+                            // Si es un nodo exterior, 45% de probabilidad de fluir hacia las dendritas
                             if (nTo.type === 'outer' && Math.random() < 0.45) {
                                 spawnDendriticSurge(nTo.id);
-                            } else if (eligible.length > 0) {
+                            }
+                            // O continuar el viaje por la red hacia cualquier otro vecino elegible
+                            else if (eligible.length > 0) {
                                 const nextTarget = eligible[Math.floor(Math.random() * eligible.length)];
                                 spawnAxonPulse(nTo.id, nextTarget, p.hopsRemaining - 1, nTo.id);
                             }
                         } else {
+                            // Si fue su último salto y es nodo exterior, termina con chispas en sus dendritas
                             if (nTo.type === 'outer' && Math.random() < 0.6) {
                                 spawnDendriticSurge(nTo.id);
                             }
@@ -784,7 +737,7 @@
                     }
                 }
 
-                // C. DESCARGAS EN LA ARBORIZACIÓN DENDRÍTICA
+                // C. ACTUALIZAR Y DIBUJAR DESCARGAS EN LAS DENDRITAS
                 for (let i = dendriticSurges.length - 1; i >= 0; i--) {
                     const ds = dendriticSurges[i];
                     ds.progress += ds.speed;
@@ -801,7 +754,7 @@
                     }
 
                     ctx.beginPath();
-                    ctx.arc(px * scale, py * scale, 2.2, 0, Math.PI * 2);
+                    ctx.arc(px * scale, py * scale, 2.3, 0, Math.PI * 2);
                     ctx.fillStyle = "#00f0ff";
                     ctx.shadowColor = "#00f0ff";
                     ctx.shadowBlur = 7;
@@ -816,19 +769,19 @@
                     }
                 }
 
-                // D. MICRO-ARCOS VOLTAICOS EN LOS BULBOS TERMINALES
+                // D. MICRO-ARCOS EN LAS PUNTAS
                 for (let i = microArcs.length - 1; i >= 0; i--) {
                     const ma = microArcs[i];
-                    ma.life -= dt * 4.2;
+                    ma.life -= dt * 4.0;
                     if (ma.life <= 0) {
                         microArcs.splice(i, 1);
                         continue;
                     }
 
                     ctx.strokeStyle = ma.color;
-                    ctx.lineWidth = 1.4 * ma.life;
+                    ctx.lineWidth = 1.5 * ma.life;
                     ctx.shadowColor = "#00f0ff";
-                    ctx.shadowBlur = 5;
+                    ctx.shadowBlur = 6;
                     ctx.beginPath();
                     ctx.moveTo(ma.x1, ma.y1);
                     ctx.lineTo(ma.x2, ma.y2);
@@ -836,7 +789,7 @@
                     ctx.shadowBlur = 0;
                 }
 
-                // E. PALPITACIÓN DE NODOS
+                // E. PALPITACIÓN DE NODOS Y DECAIMIENTO ORGÁNICO
                 nodes.forEach(node => {
                     if (node.excitation > 0.01) {
                         node.excitation *= 0.93;
@@ -856,14 +809,14 @@
                     }
                 });
 
-                // Telemetría
+                // Telemetría en vivo
                 const totalActive = pulses.length + dendriticSurges.length;
                 hudPulseCount.textContent = totalActive.toString();
 
                 requestAnimationFrame(loop);
             }
 
-            // 7. INCLINACIÓN 3D TILT REACTIVA
+            // 7. INCLINACIÓN 3D TILT REACTIVA AL CURSOR
             let maxTilt = parseFloat(inputTiltSens.value);
 
             kineticCard.addEventListener("mousemove", (e) => {
@@ -874,7 +827,7 @@
                 const rotX = -yPct * (maxTilt * 2);
                 const rotY = xPct * (maxTilt * 2);
 
-                tiltWrapper.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.03, 1.03, 1.03)`;
+                tiltWrapper.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.04, 1.04, 1.04)`;
                 hudTilt.textContent = `${rotX.toFixed(1)}° / ${rotY.toFixed(1)}°`;
             });
 
@@ -923,7 +876,7 @@
                 });
             });
 
-            // 9. MODAL DE EXPORTACIÓN
+            // 9. MODAL DE EXPORTACIÓN (Sin riesgo de cortes)
             const modal = document.getElementById("export-modal");
             const openBtn = document.getElementById("btn-open-modal");
             const closeBtn = document.getElementById("btn-close-modal");
@@ -940,8 +893,8 @@
                 return [
                     '---',
                     '/**',
-                    ' * Componente: BioNeuralNetwork.astro',
-                    ' * Red bio-neuronal con arborización dendrítica realista y flujo continuo.',
+                    ' * Componente: OmnidirectionalBioNeural.astro',
+                    ' * Red bio-neuronal estática con flujo constante omnidireccional y cero lag.',
                     ' */',
                     'interface Props {',
                     '  size?: string;',
@@ -962,6 +915,7 @@
                     '    document.querySelectorAll(".bio-card").forEach((card) => {',
                     '      if (card.dataset.ready) return;',
                     '      card.dataset.ready = "true";',
+                    '      // Flujo continuo omnidireccional con límite de saltos',
                     '    });',
                     '  }',
                     '  document.addEventListener("DOMContentLoaded", initOmniBio);',
@@ -973,7 +927,7 @@
             function getHtmlCode() {
                 const svgContent = document.querySelector("#tilt-wrapper svg").outerHTML;
                 return [
-                    '<!-- Red Neuronal con Dendritas Realistas: HTML + Tailwind + TS -->',
+                    '<!-- Red Neuronal Omnidireccional Continua: HTML + Tailwind + TS -->',
                     '<div id="bio-container" class="w-96 h-96 relative flex items-center justify-center select-none" style="perspective: 1200px;">',
                     '  <div id="bio-tilt" class="w-full h-full flex items-center justify-center transition-transform duration-100 ease-out">',
                     '    ' + svgContent,
@@ -981,7 +935,7 @@
                     '</div>',
                     '',
                     '<script>',
-                    '  // Flujo omnidireccional y canopia dendrítica en 3 niveles',
+                    '  // Flujo omnidireccional continuo sin bucles infinitos',
                     '<' + '/script>'
                 ].join('\n');
             }

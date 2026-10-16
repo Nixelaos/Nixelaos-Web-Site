@@ -221,7 +221,7 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
         addNeighbor(outId, nextOutId);
       }
 
-      // 2. ARBORIZACIÓN DENDRÍTICA (12 Árboles)
+      // 2. ARBORIZACIÓN DENDRÍTICA RAMIFICADA (12 Árboles)
       function buildDendriticArborizations() {
         dendriticForest.innerHTML = '';
         terminalBoutonsGroup.innerHTML = '';
@@ -232,6 +232,7 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
           const baseAngle = (i * 2 * Math.PI) / 12;
           const trunkLen = 65 + (i % 2) * 10;
 
+          // Bifurcaciones orgánicas
           const cp0X = rootNode.x + (trunkLen * 0.45) * Math.cos(baseAngle + 0.08);
           const cp0Y = rootNode.y + (trunkLen * 0.45) * Math.sin(baseAngle + 0.08);
           const fork0X = rootNode.x + (trunkLen * 0.6) * Math.cos(baseAngle);
@@ -265,6 +266,7 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
 
           dendriticArbors.push({ rootId: rootNode.id, segments: treeSegments });
 
+          // Trazados SVG
           const pathMain = document.createElementNS(SVG_NS, "path");
           pathMain.setAttribute("d", `M ${rootNode.x} ${rootNode.y} Q ${cp0X} ${cp0Y} ${fork0X} ${fork0Y}`);
           pathMain.setAttribute("stroke", axonGradId);
@@ -283,6 +285,7 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
           pathBranches.setAttribute("opacity", "0.85");
           dendriticForest.appendChild(pathBranches);
 
+          // Botones terminales
           [{ x: endAX, y: endAY, r: 2.8 }, { x: spineAX, y: spineAY, r: 2.0 }, { x: endBX, y: endBY, r: 2.8 }, { x: spineBX, y: spineBY, r: 2.0 }].forEach(tp => {
             const c = document.createElementNS(SVG_NS, "circle");
             c.setAttribute("cx", tp.x.toFixed(1));
