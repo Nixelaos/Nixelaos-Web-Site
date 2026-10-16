@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import TechStack from '../components/TechStack.astro';
+import Footer from '../components/Footer.astro';
+import BioNeuralCorona from '../components/BioNeuralCorona.astro';
+import { Cpu, CheckCircle2, ArrowRight } from 'lucide-react';
+---
+
+<Layout
+  title="Stack Tecnológico & Infraestructura | Nixelaos Tech"
+  description="Dominamos las tecnologías líderes en desarrollo Backend, Frontend, Cloud & DevOps, Bases de Datos de alto rendimiento y servidores Linux."
+>
+  <Navbar />
+  <main class="flex-grow">
+    
+    <!-- Hero / Encabezado de la Vista de Tecnologías -->
+    <section class="pt-12 pb-6 text-center max-w-4xl mx-auto px-4 sm:px-6 relative">
+      
+      <!-- Objeto Interactivo de Corona Dendrítica en la pantalla -->
+      <div class="mb-4">
+        <BioNeuralCorona size="sm" />
+      </div>
+
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-800/60 text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-4 shadow-inner">
+        <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+        <span>Ingeniería sin Ataduras Tecnológicas</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+        Tecnologías Modernas, Robustas y <br />
+        <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent">
+          Probadas a Escala Empresarial
+        </span>
+      </h1>
+      <p class="text-lg text-slate-300 max-w-2xl mx-auto">
+        No elegimos herramientas por moda: seleccionamos stacks consolidados con soporte a largo plazo, alta eficiencia computacional y facilidad de mantenimiento.
+      </p>
+    </section>
+
+    <!-- Componente de Tecnologías por Categorías -->
+    <TechStack />
+
+    <!-- Sección de Criterios de Selección Tecnológica en Azul Marino -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="bg-[#091a32]/80 border border-cyan-950 rounded-3xl p-8 sm:p-12 shadow-xl backdrop-blur-md">
+        <h3 class="text-2xl font-bold text-white mb-6 text-center">
+          Nuestros Principios de Arquitectura Técnica
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="space-y-3">
+            <div class="flex items-center gap-2.5 text-base font-bold text-cyan-400">
+              <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+              <span>Cloud-Agnostic & Portabilidad</span>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Diseñamos soluciones en contenedores Docker y código desacoplado para evitar el bloqueo con proveedores (Vendor Lock-in) y facilitar futuras migraciones.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center gap-2.5 text-base font-bold text-cyan-400">
+              <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+              <span>Seguridad Shift-Left</span>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Incorporamos auditoría de dependencias, variables de entorno cifradas, políticas de menor privilegio y estándares OWASP desde la primera línea de código.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center gap-2.5 text-base font-bold text-cyan-400">
+              <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+              <span>Observabilidad Total</span>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Monitoreo activo de métricas de CPU, latencias de red, errores 5xx y telemetría de base de datos para anticipar incidentes antes de que impacten al cliente.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-cyan-950/80 text-center">
+          <a
+            href="/contacto"
+            class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-black bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-400 hover:from-cyan-300 hover:to-white shadow-md shadow-cyan-500/20 transition-all text-sm font-medium"
+          >
+            <span>Consultar Compatibilidad con su Stack Actual</span>
+            <ArrowRight className="w-4 h-4 text-black" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+</Layout>

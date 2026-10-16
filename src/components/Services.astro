@@ -1,0 +1,143 @@
+---
+import {
+  Code2,
+  CloudCog,
+  Database,
+  Server,
+  Wrench,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowUpRight
+} from 'lucide-react';
+
+const services = [
+  {
+    icon: Code2,
+    badge: 'Desarrollo Full-Stack',
+    title: 'Desarrollo de Software y Web Apps a Medida',
+    description: 'Construimos plataformas digitales robustas y sistemas corporativos escalables diseñados para soportar el crecimiento sostenido de su negocio.',
+    deliverables: [
+      'Portales empresariales, SaaS y plataformas web reactivas',
+      'APIs RESTful y GraphQL seguras con documentación interactiva',
+      'Arquitectura modular con Clean Code y cobertura de pruebas'
+    ]
+  },
+  {
+    icon: CloudCog,
+    badge: 'Cloud Engineering',
+    title: 'Infraestructura Cloud & DevOps (AWS / OCI / Docker)',
+    description: 'Modernizamos su arquitectura de servidores para garantizar alta disponibilidad, despliegues sin interrupciones y reducción de costos operativos.',
+    deliverables: [
+      'Migración y orquestación multi-cloud en AWS, OCI y GCP',
+      'Pipelines CI/CD automatizados y contenerización con Docker',
+      'Infraestructura como Código (IaC) mediante Terraform'
+    ]
+  },
+  {
+    icon: Database,
+    badge: 'Data Management',
+    title: 'Administración y Optimización de Bases de Datos',
+    description: 'Garantizamos la integridad, velocidad de consulta y redundancia de sus repositorios de datos críticos relacionales y NoSQL.',
+    deliverables: [
+      'Tuning avanzado de consultas complejas y optimización de índices',
+      'Estrategias de replicación, alta disponibilidad y clustering',
+      'Gestión de entornos PostgreSQL, MySQL, Redis y MongoDB'
+    ]
+  },
+  {
+    icon: Server,
+    badge: 'Infraestructura & Redes',
+    title: 'Soporte Técnico, Redes y Mantenimiento de Sistemas',
+    description: 'Aseguramos la estabilidad física y lógica de su ecosistema tecnológico mediante monitoreo preventivo y resolución técnica de nivel experto.',
+    deliverables: [
+      'Mesa de ayuda especializada N2/N3 y SLA de respuesta rápida',
+      'Diseño y securización de redes, firewalls y VPNs empresariales',
+      'Administración de servidores Linux/Windows y parches de seguridad'
+    ]
+  },
+  {
+    icon: Wrench,
+    badge: 'Integraciones & RPA',
+    title: 'Automatización de Procesos e Integración de APIs / ERPs',
+    description: 'Conectamos sus sistemas dispares para eliminar tareas manuales repetitivas, reducir errores operativos y agilizar flujos de trabajo.',
+    deliverables: [
+      'Integración con ERPs líderes (SAP, Odoo) y CRMs corporativos',
+      'Microservicios dedicados y webhooks para sincronización en vivo',
+      'Automatización de conciliaciones y reportería de gestión'
+    ]
+  },
+  {
+    icon: ShieldCheck,
+    badge: 'Ciberseguridad & Continuidad',
+    title: 'Auditoría de Seguridad y Respaldo de Datos',
+    description: 'Blindamos los activos de información de su organización frente a amenazas digitales, cumpliendo normativas internacionales de cumplimiento.',
+    deliverables: [
+      'Análisis continuo de vulnerabilidades y escaneo perimetral',
+      'Plan de Recuperación ante Desastres (DRP) y copias inmutables',
+      'Encriptación punto a punto y control estricto de accesos IAM'
+    ]
+  }
+];
+---
+
+<section id="servicios" class="py-12 md:py-20 bg-transparent relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    
+    <!-- Grid Responsivo de 6 Tarjetas de Servicios en Azul Marino -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {services.map((service) => {
+        const IconComponent = service.icon;
+        return (
+          <div class="bg-[#091a32]/75 border border-cyan-950/80 rounded-2xl p-7 flex flex-col justify-between hover:border-cyan-500/50 hover:bg-[#0c2340]/90 hover:shadow-2xl hover:shadow-cyan-950/50 transition-all duration-300 group shadow-md backdrop-blur-md">
+            <div>
+              <!-- Cabecera de la tarjeta con Icono y Badge -->
+              <div class="flex items-center justify-between mb-6">
+                <div class="w-14 h-14 rounded-xl bg-cyan-950/70 border border-cyan-800/60 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-black group-hover:scale-105 transition-all duration-200 shadow-inner">
+                  <IconComponent className="w-7 h-7" />
+                </div>
+                <span class="text-[11px] font-semibold text-cyan-300 tracking-wider uppercase px-2.5 py-1 rounded-md bg-cyan-950/60 border border-cyan-900/60">
+                  {service.badge}
+                </span>
+              </div>
+
+              <!-- Título del Servicio -->
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors leading-snug">
+                {service.title}
+              </h3>
+
+              <!-- Descripción breve -->
+              <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                {service.description}
+              </p>
+
+              <!-- Entregables Concretos con CheckCircle2 -->
+              <div class="pt-5 border-t border-cyan-950/80 mb-6">
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider block mb-3">
+                  Entregables Principales:
+                </span>
+                <ul class="space-y-2.5">
+                  {service.deliverables.map((item) => (
+                    <li class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                      <span class="leading-snug">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <!-- Botón interno de la tarjeta para consultar -->
+            <a
+              href="/contacto"
+              class="inline-flex items-center justify-between w-full px-4 py-2.5 rounded-lg text-xs font-semibold text-cyan-300 bg-cyan-950/40 hover:bg-cyan-400 hover:text-black border border-cyan-900/60 hover:border-transparent transition-all duration-200 mt-2 shadow-sm"
+            >
+              <span>Solicitar asesoría para este servicio</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </div>
+        );
+      })}
+    </div>
+
+  </div>
+</section>

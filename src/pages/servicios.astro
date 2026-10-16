@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Services from '../components/Services.astro';
+import Footer from '../components/Footer.astro';
+import BioNeuralCorona from '../components/BioNeuralCorona.astro';
+import { ArrowRight, Sparkles } from 'lucide-react';
+---
+
+<Layout
+  title="Servicios TI & Consultoría Tecnológica | Nixelaos Tech"
+  description="Soluciones tecnológicas empresariales: Desarrollo de software a medida, Cloud & DevOps, Optimización de Bases de Datos, Soporte de Servidores y Ciberseguridad."
+>
+  <Navbar />
+  <main class="flex-grow">
+    
+    <!-- Hero / Encabezado de la Vista de Servicios -->
+    <section class="pt-12 pb-6 text-center max-w-4xl mx-auto px-4 sm:px-6 relative">
+      
+      <!-- Objeto Interactivo de Corona Dendrítica en la pantalla -->
+      <div class="mb-4">
+        <BioNeuralCorona size="sm" />
+      </div>
+
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-800/60 text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-4 shadow-inner">
+        <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+        <span>Portafolio B2B Especializado</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+        Servicios de Ingeniería TI y <br />
+        <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent">
+          Consultoría Estratégica
+        </span>
+      </h1>
+      <p class="text-lg text-slate-300 max-w-2xl mx-auto">
+        Acompañamos a su empresa en cada etapa del ciclo de vida tecnológico, desde la concepción de software hasta la operación y blindaje de infraestructuras críticas.
+      </p>
+    </section>
+
+    <!-- Componente de Servicios (Grid Completo de 6 Servicios) -->
+    <Services />
+
+    <!-- Banner Inferior de Conversión hacia Contacto en Azul Marino -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="rounded-3xl bg-gradient-to-r from-[#0c2340] via-[#09325c] to-[#04203e] border border-cyan-900/50 p-8 sm:p-12 text-white shadow-2xl shadow-cyan-950/40 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div>
+          <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 text-white">
+            ¿Necesita una solución personalizada para su empresa?
+          </h3>
+          <p class="text-slate-300 text-sm sm:text-base max-w-xl">
+            Nuestros arquitectos de software e infraestructura evaluarán su caso y le entregarán una propuesta técnica y económica formal.
+          </p>
+        </div>
+        <a
+          href="/contacto"
+          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-sm sm:text-base font-semibold bg-cyan-400 text-black hover:bg-white hover:shadow-lg transition-all shrink-0 active:scale-95"
+        >
+          <span>Solicitar Cotización</span>
+          <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+</Layout>

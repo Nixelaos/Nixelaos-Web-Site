@@ -1,0 +1,160 @@
+---
+import { ShieldCheck } from 'lucide-react';
+
+interface Props {
+  theme?: 'dark' | 'light';
+}
+
+const { theme = 'dark' } = Astro.props;
+const currentYear = new Date().getFullYear();
+
+const footerLinks = {
+  servicios: [
+    { label: 'Desarrollo de Software', href: '/servicios' },
+    { label: 'Infraestructura Cloud & DevOps', href: '/servicios' },
+    { label: 'Optimización de Bases de Datos', href: '/servicios' },
+    { label: 'Soporte y Servidores Linux', href: '/servicios' },
+    { label: 'Automatización e Integraciones', href: '/servicios' },
+    { label: 'Auditoría de Ciberseguridad', href: '/servicios' },
+  ],
+  empresa: [
+    { label: 'Inicio', href: '/' },
+    { label: 'Nuestros Servicios', href: '/servicios' },
+    { label: 'Metodología de Trabajo', href: '/proceso' },
+    { label: 'Stack Tecnológico', href: '/tecnologias' },
+    { label: 'Contacto Comercial', href: '/contacto' },
+  ],
+  legal: [
+    { label: 'Términos de Servicio', href: '#' },
+    { label: 'Política de Privacidad', href: '#' },
+    { label: 'Acuerdo de Confidencialidad (NDA)', href: '#' },
+    { label: 'Garantía de SLAs', href: '#' },
+  ]
+};
+---
+
+<footer class={`border-t pt-16 pb-12 relative overflow-hidden mt-auto ${
+  theme === 'light'
+    ? 'bg-slate-50/95 border-slate-200 text-slate-700'
+    : 'bg-[#020914] border-cyan-950/80 text-slate-100'
+}`}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Cuadrícula Principal -->
+    <div class={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b ${
+      theme === 'light' ? 'border-slate-200' : 'border-cyan-950/80'
+    }`}>
+      
+      <!-- Columna 1 y 2: Identidad y Misión con Foto 1 -->
+      <div class="lg:col-span-2 space-y-4">
+        <a href="/" class="inline-flex items-center gap-3 group focus:outline-none" aria-label="Nixelaos Tech Inicio">
+          <div class={`w-12 h-12 flex items-center justify-center p-0.5 rounded-xl border shadow-inner transition-colors ${
+            theme === 'light'
+              ? 'bg-slate-100 border-slate-200 group-hover:border-cyan-500/50'
+              : 'bg-cyan-950/50 border-cyan-800/40 group-hover:border-cyan-500/50'
+          }`}>
+            <img
+              src="/images/logo.png"
+              alt="Nixelaos Logo"
+              class="w-full h-full object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_0_10px_rgba(205,127,50,0.4)]"
+            />
+          </div>
+          <div class="flex flex-col">
+            <span class={`text-xl font-bold tracking-tight font-mono ${
+              theme === 'light' ? 'text-slate-900' : 'text-white'
+            }`}>
+              NIXELAOS<span class="text-cyan-500">.</span>
+            </span>
+            <span class="text-[10px] uppercase tracking-widest font-semibold text-cyan-600/90 -mt-1">
+              IT Solutions
+            </span>
+          </div>
+        </a>
+
+        <p class={`text-sm leading-relaxed max-w-sm ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
+          Firma de consultoría e ingeniería tecnológica especializada en el diseño, modernización y soporte de infraestructura TI crítica para empresas en crecimiento.
+        </p>
+
+        <div class={`flex items-center gap-2 pt-2 text-xs font-medium ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+          <ShieldCheck className="w-4 h-4 text-cyan-600 shrink-0" />
+          <span>Infraestructura Segura & Estándares ISO/IEC</span>
+        </div>
+      </div>
+
+      <!-- Columna 3: Enlaces de Servicios -->
+      <div>
+        <h4 class={`text-xs font-bold uppercase tracking-wider mb-4 ${theme === 'light' ? 'text-cyan-700' : 'text-cyan-400'}`}>
+          Servicios TI
+        </h4>
+        <ul class="space-y-2.5">
+          {footerLinks.servicios.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class={`text-sm transition-colors ${
+                  theme === 'light' ? 'text-slate-600 hover:text-cyan-600' : 'text-slate-400 hover:text-cyan-300'
+                }`}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Columna 4: Navegación de Empresa -->
+      <div>
+        <h4 class={`text-xs font-bold uppercase tracking-wider mb-4 ${theme === 'light' ? 'text-cyan-700' : 'text-cyan-400'}`}>
+          Navegación
+        </h4>
+        <ul class="space-y-2.5">
+          {footerLinks.empresa.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class={`text-sm transition-colors ${
+                  theme === 'light' ? 'text-slate-600 hover:text-cyan-600' : 'text-slate-400 hover:text-cyan-300'
+                }`}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Columna 5: Cumplimiento y Legal -->
+      <div>
+        <h4 class={`text-xs font-bold uppercase tracking-wider mb-4 ${theme === 'light' ? 'text-cyan-700' : 'text-cyan-400'}`}>
+          Seguridad & Legal
+        </h4>
+        <ul class="space-y-2.5">
+          {footerLinks.legal.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class={`text-sm transition-colors ${
+                  theme === 'light' ? 'text-slate-600 hover:text-cyan-600' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Fila Inferior de Copyright -->
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <p>
+        &copy; {currentYear} Nixelaos IT Solutions SpA. Todos los derechos reservados.
+      </p>
+      <p class="text-slate-500">
+        Diseñado con enfoque de Alto Rendimiento, Accesibilidad y Zero-JS estático.
+      </p>
+    </div>
+
+  </div>
+</footer>

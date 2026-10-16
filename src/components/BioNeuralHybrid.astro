@@ -1,0 +1,658 @@
+---
+/**
+ * Componente: BioNeuralHybrid.astro
+ * Interfaz Gráfica Bio-Electrónica Híbrida (SVG Vectorial + Canvas 2D a 60 FPS)
+ * Nixelaos Tech - Corona Dendrítica con Red Sináptica y Potenciales de Acción
+ */
+
+interface Props {
+  className?: string;
+  size?: string;
+}
+
+const {
+  className = '',
+  size = 'w-80 h-80 sm:w-[440px] sm:h-[440px] lg:w-[480px] lg:h-[480px]'
+} = Astro.props;
+
+// ID único por componente para aislamiento de gradientes SVG y canvas
+const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<div class={`bio-hybrid-root relative flex items-center justify-center ${size} ${className}`} id={uniqueId}>
+  <!-- Halo Bioluminiscente Dinámico -->
+  <div class="bio-halo absolute inset-4 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- Contenedor con Perspectiva 3D Tilt -->
+  <div class="bio-tilt-card w-full h-full relative flex items-center justify-center cursor-pointer select-none" style="perspective: 1200px;">
+    
+    <!-- Envoltura 3D que responde al cursor -->
+    <div class="bio-tilt-wrap w-full h-full relative flex items-center justify-center transition-transform duration-100 ease-out will-change-transform">
+      
+      <!-- CAPA 1: SVG - ANATOMÍA BIO-ELECTRÓNICA VECTORIAL NÍTIDA -->
+      <svg viewBox="0 0 600 600" class="w-full h-full filter drop-shadow-[0_10px_25px_rgba(2,132,199,0.22)] relative z-10 pointer-events-none">
+        <defs>
+          <radialGradient id={`${uniqueId}-coreGrad`} cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="30%" stop-color="#38bdf8" />
+            <stop offset="70%" stop-color="#0284c7" />
+            <stop offset="100%" stop-color="#0f172a" />
+          </radialGradient>
+
+          <radialGradient id={`${uniqueId}-nodeGrad`} cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#e0f2fe" />
+            <stop offset="45%" stop-color="#0ea5e9" />
+            <stop offset="100%" stop-color="#1e3a8a" />
+          </radialGradient>
+
+          <linearGradient id={`${uniqueId}-axonGrad`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0284c7" />
+            <stop offset="50%" stop-color="#2563eb" />
+            <stop offset="100%" stop-color="#0ea5e9" />
+          </linearGradient>
+        </defs>
+
+        <!-- 1. Arborización Dendrítica Exterior -->
+        <g class="bio-dendritic-forest" stroke-linecap="round" fill="none"></g>
+
+        <!-- 2. Red Axónica Interna -->
+        <g class="bio-axon-mesh" stroke={`url(#${uniqueId}-axonGrad)`} stroke-width="2.4" stroke-linecap="round" opacity="0.75" fill="none"></g>
+
+        <!-- 3. Cuerpos Celulares (Somas) Palpitantes -->
+        <g class="bio-soma-nodes"></g>
+
+        <!-- 4. Botones Sinápticos Terminales -->
+        <g class="bio-terminal-boutons" fill="#00f0ff" stroke="#ffffff" stroke-width="1"></g>
+      </svg>
+
+      <!-- CAPA 2: CANVAS 2D - POTENCIALES DE ACCIÓN, DESCARGAS Y MICRO-ARCOS A 60 FPS -->
+      <canvas class="bio-sparks-canvas absolute inset-0 w-full h-full pointer-events-none z-20"></canvas>
+    </div>
+  </div>
+
+  <!-- Telemetría HUD Inferior Integrada -->
+  <div class="absolute -bottom-2 left-3 right-3 flex items-center justify-between text-[11px] font-mono pointer-events-none z-30">
+    <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200 text-slate-700 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+      <span class="text-cyan-700 font-semibold text-[10px]">BIO-HYBRID:</span>
+      <span class="text-slate-600 text-[10px] font-medium">ACTIVO</span>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200 text-slate-600 shadow-sm text-[10px]">
+      <span>PULSOS EN VIVO:</span>
+      <span class="bio-hud-pulses text-cyan-600 font-bold">0</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const CENTER = { x: 300, y: 300 };
+
+    function setupBioHybridInstance(root: HTMLElement) {
+      if ((root as any).__bioHybridInit) return;
+      (root as any).__bioHybridInit = true;
+
+      const tiltWrap = root.querySelector('.bio-tilt-wrap') as HTMLElement;
+      const tiltCard = root.querySelector('.bio-tilt-card') as HTMLElement;
+      const haloGlow = root.querySelector('.bio-halo') as HTMLElement;
+      const dendriticForest = root.querySelector('.bio-dendritic-forest') as SVGGElement;
+      const axonMesh = root.querySelector('.bio-axon-mesh') as SVGGElement;
+      const somaNodesGroup = root.querySelector('.bio-soma-nodes') as SVGGElement;
+      const terminalBoutonsGroup = root.querySelector('.bio-terminal-boutons') as SVGGElement;
+      const canvas = root.querySelector('.bio-sparks-canvas') as HTMLCanvasElement;
+      const hudPulseCount = root.querySelector('.bio-hud-pulses') as HTMLElement;
+
+      if (!tiltWrap || !tiltCard || !canvas || !dendriticForest || !axonMesh || !somaNodesGroup || !terminalBoutonsGroup) {
+        return;
+      }
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const rootId = root.id;
+      const coreGradId = `url(#${rootId}-coreGrad)`;
+      const nodeGradId = `url(#${rootId}-nodeGrad)`;
+      const axonGradId = `url(#${rootId}-axonGrad)`;
+
+      // 1. TOPOLOGÍA DE NODOS
+      interface BioNode {
+        id: number;
+        x: number;
+        y: number;
+        baseR: number;
+        type: 'core' | 'inner' | 'outer';
+        excitation: number;
+        element: SVGCircleElement | null;
+        haloElement: SVGCircleElement | null;
+      }
+
+      const nodes: BioNode[] = [];
+      const axonLines: { from: number; to: number }[] = [];
+      const neighborsMap: Record<number, number[]> = {};
+      const dendriticArbors: { rootId: number; segments: any[] }[] = [];
+
+      function addNeighbor(a: number, b: number) {
+        if (!neighborsMap[a]) neighborsMap[a] = [];
+        if (!neighborsMap[b]) neighborsMap[b] = [];
+        if (!neighborsMap[a].includes(b)) neighborsMap[a].push(b);
+        if (!neighborsMap[b].includes(a)) neighborsMap[b].push(a);
+      }
+
+      // Nodo Núcleo Central (0)
+      nodes.push({
+        id: 0,
+        x: CENTER.x,
+        y: CENTER.y,
+        baseR: 15,
+        type: 'core',
+        excitation: 0,
+        element: null,
+        haloElement: null
+      });
+
+      // Anillo Interno (1 a 6)
+      const innerCount = 6;
+      const innerR = 76;
+      for (let i = 0; i < innerCount; i++) {
+        const a = (i * 2 * Math.PI) / innerCount - Math.PI / 6;
+        nodes.push({
+          id: 1 + i,
+          x: CENTER.x + innerR * Math.cos(a),
+          y: CENTER.y + innerR * Math.sin(a),
+          baseR: 9.5,
+          type: 'inner',
+          excitation: 0,
+          element: null,
+          haloElement: null
+        });
+      }
+
+      // Anillo Exterior (7 a 18)
+      const outerCount = 12;
+      const outerR = 146;
+      for (let i = 0; i < outerCount; i++) {
+        const a = (i * 2 * Math.PI) / outerCount;
+        nodes.push({
+          id: 7 + i,
+          x: CENTER.x + outerR * Math.cos(a),
+          y: CENTER.y + outerR * Math.sin(a),
+          baseR: 7.5,
+          type: 'outer',
+          excitation: 0,
+          element: null,
+          haloElement: null
+        });
+      }
+
+      // Conexiones Axonales Bidireccionales
+      // Centro <-> Internos
+      for (let i = 1; i <= 6; i++) {
+        axonLines.push({ from: 0, to: i });
+        addNeighbor(0, i);
+      }
+
+      // Internos entre sí
+      for (let i = 1; i <= 6; i++) {
+        const next = i === 6 ? 1 : i + 1;
+        const diagonal = ((i + 1) % 6) + 1;
+        axonLines.push({ from: i, to: next });
+        axonLines.push({ from: i, to: diagonal });
+        addNeighbor(i, next);
+        addNeighbor(i, diagonal);
+      }
+
+      // Internos <-> Exteriores
+      for (let i = 0; i < 12; i++) {
+        const outId = 7 + i;
+        const inId = 1 + (Math.floor(i / 2) % 6);
+        const nextInId = inId === 6 ? 1 : inId + 1;
+
+        axonLines.push({ from: inId, to: outId });
+        addNeighbor(inId, outId);
+
+        if (i % 2 === 1) {
+          axonLines.push({ from: nextInId, to: outId });
+          addNeighbor(nextInId, outId);
+        }
+
+        const nextOutId = 7 + ((i + 1) % 12);
+        axonLines.push({ from: outId, to: nextOutId });
+        addNeighbor(outId, nextOutId);
+      }
+
+      // 2. ARBORIZACIÓN DENDRÍTICA (12 Árboles)
+      function buildDendriticArborizations() {
+        dendriticForest.innerHTML = '';
+        terminalBoutonsGroup.innerHTML = '';
+        dendriticArbors.length = 0;
+
+        for (let i = 0; i < 12; i++) {
+          const rootNode = nodes[7 + i];
+          const baseAngle = (i * 2 * Math.PI) / 12;
+          const trunkLen = 65 + (i % 2) * 10;
+
+          const cp0X = rootNode.x + (trunkLen * 0.45) * Math.cos(baseAngle + 0.08);
+          const cp0Y = rootNode.y + (trunkLen * 0.45) * Math.sin(baseAngle + 0.08);
+          const fork0X = rootNode.x + (trunkLen * 0.6) * Math.cos(baseAngle);
+          const fork0Y = rootNode.y + (trunkLen * 0.6) * Math.sin(baseAngle);
+
+          // Rama A
+          const angleA = baseAngle - 0.22;
+          const cpAX = fork0X + (trunkLen * 0.4) * Math.cos(angleA);
+          const cpAY = fork0Y + (trunkLen * 0.4) * Math.sin(angleA);
+          const endAX = fork0X + (trunkLen * 0.72) * Math.cos(angleA - 0.05);
+          const endAY = fork0Y + (trunkLen * 0.72) * Math.sin(angleA - 0.05);
+          const spineAX = endAX + 15 * Math.cos(angleA + 0.35);
+          const spineAY = endAY + 15 * Math.sin(angleA + 0.35);
+
+          // Rama B
+          const angleB = baseAngle + 0.24;
+          const cpBX = fork0X + (trunkLen * 0.4) * Math.cos(angleB);
+          const cpBY = fork0Y + (trunkLen * 0.4) * Math.sin(angleB);
+          const endBX = fork0X + (trunkLen * 0.78) * Math.cos(angleB + 0.08);
+          const endBY = fork0Y + (trunkLen * 0.78) * Math.sin(angleB + 0.08);
+          const spineBX = endBX + 16 * Math.cos(angleB - 0.4);
+          const spineBY = endBY + 16 * Math.sin(angleB - 0.4);
+
+          const treeSegments = [
+            { from: { x: rootNode.x, y: rootNode.y }, cp: { x: cp0X, y: cp0Y }, to: { x: fork0X, y: fork0Y }, isTerminal: false },
+            { from: { x: fork0X, y: fork0Y }, cp: { x: cpAX, y: cpAY }, to: { x: endAX, y: endAY }, isTerminal: false },
+            { from: { x: endAX, y: endAY }, to: { x: spineAX, y: spineAY }, isTerminal: true },
+            { from: { x: fork0X, y: fork0Y }, cp: { x: cpBX, y: cpBY }, to: { x: endBX, y: endBY }, isTerminal: false },
+            { from: { x: endBX, y: endBY }, to: { x: spineBX, y: spineBY }, isTerminal: true }
+          ];
+
+          dendriticArbors.push({ rootId: rootNode.id, segments: treeSegments });
+
+          const pathMain = document.createElementNS(SVG_NS, "path");
+          pathMain.setAttribute("d", `M ${rootNode.x} ${rootNode.y} Q ${cp0X} ${cp0Y} ${fork0X} ${fork0Y}`);
+          pathMain.setAttribute("stroke", axonGradId);
+          pathMain.setAttribute("stroke-width", "2.8");
+          dendriticForest.appendChild(pathMain);
+
+          const pathBranches = document.createElementNS(SVG_NS, "path");
+          pathBranches.setAttribute("d",
+            `M ${fork0X} ${fork0Y} Q ${cpAX} ${cpAY} ${endAX} ${endAY} ` +
+            `M ${endAX} ${endAY} L ${spineAX} ${spineAY} ` +
+            `M ${fork0X} ${fork0Y} Q ${cpBX} ${cpBY} ${endBX} ${endBY} ` +
+            `M ${endBX} ${endBY} L ${spineBX} ${spineBY}`
+          );
+          pathBranches.setAttribute("stroke", axonGradId);
+          pathBranches.setAttribute("stroke-width", "1.6");
+          pathBranches.setAttribute("opacity", "0.85");
+          dendriticForest.appendChild(pathBranches);
+
+          [{ x: endAX, y: endAY, r: 2.8 }, { x: spineAX, y: spineAY, r: 2.0 }, { x: endBX, y: endBY, r: 2.8 }, { x: spineBX, y: spineBY, r: 2.0 }].forEach(tp => {
+            const c = document.createElementNS(SVG_NS, "circle");
+            c.setAttribute("cx", tp.x.toFixed(1));
+            c.setAttribute("cy", tp.y.toFixed(1));
+            c.setAttribute("r", tp.r.toString());
+            c.setAttribute("filter", "drop-shadow(0 0 3px #00f0ff)");
+            terminalBoutonsGroup.appendChild(c);
+          });
+        }
+      }
+
+      // 3. MALLA AXÓNICA VISUAL
+      function drawAxonMesh() {
+        axonMesh.innerHTML = '';
+        axonLines.forEach(l => {
+          const nA = nodes[l.from];
+          const nB = nodes[l.to];
+          const line = document.createElementNS(SVG_NS, "line");
+          line.setAttribute("x1", nA.x.toFixed(1));
+          line.setAttribute("y1", nA.y.toFixed(1));
+          line.setAttribute("x2", nB.x.toFixed(1));
+          line.setAttribute("y2", nB.y.toFixed(1));
+          axonMesh.appendChild(line);
+        });
+      }
+
+      // 4. CREAR NODOS SOMA PALPITANTES
+      function createSomaElements() {
+        somaNodesGroup.innerHTML = '';
+        nodes.forEach(node => {
+          const halo = document.createElementNS(SVG_NS, "circle");
+          halo.setAttribute("cx", node.x.toFixed(1));
+          halo.setAttribute("cy", node.y.toFixed(1));
+          halo.setAttribute("r", (node.baseR * 1.8).toFixed(1));
+          halo.setAttribute("fill", "#00f0ff");
+          halo.setAttribute("opacity", "0");
+          halo.setAttribute("filter", "drop-shadow(0 0 8px #00f0ff)");
+          somaNodesGroup.appendChild(halo);
+          node.haloElement = halo;
+
+          const circle = document.createElementNS(SVG_NS, "circle");
+          circle.setAttribute("cx", node.x.toFixed(1));
+          circle.setAttribute("cy", node.y.toFixed(1));
+          circle.setAttribute("r", node.baseR.toString());
+          circle.setAttribute("fill", node.type === 'core' ? coreGradId : nodeGradId);
+          circle.setAttribute("stroke", "#0284c7");
+          circle.setAttribute("stroke-width", "2");
+          circle.setAttribute("filter", "drop-shadow(0 2px 6px rgba(2,132,199,0.35))");
+          somaNodesGroup.appendChild(circle);
+          node.element = circle;
+        });
+      }
+
+      // 5. MOTOR DE PULSOS MULTIDIRECCIONALES
+      interface AxonPulse {
+        fromId: number;
+        toId: number;
+        prevNodeId: number;
+        progress: number;
+        speed: number;
+        hopsRemaining: number;
+      }
+
+      interface DendriticSurge {
+        segment: any;
+        progress: number;
+        speed: number;
+      }
+
+      interface MicroArc {
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+        life: number;
+        color: string;
+      }
+
+      const pulses: AxonPulse[] = [];
+      const dendriticSurges: DendriticSurge[] = [];
+      const microArcs: MicroArc[] = [];
+
+      const MAX_ACTIVE_PULSES = 28;
+      const pulseSpeedFactor = 1.0;
+      const pulseIntensityMultiplier = 0.65;
+
+      function spawnAxonPulse(fromId: number, toId: number, hopsRemaining: number, prevNodeId = -1) {
+        if (pulses.length >= MAX_ACTIVE_PULSES) return;
+        pulses.push({
+          fromId,
+          toId,
+          prevNodeId,
+          progress: 0,
+          speed: (0.022 + Math.random() * 0.008) * pulseSpeedFactor,
+          hopsRemaining
+        });
+      }
+
+      function spawnDendriticSurge(outerNodeId: number) {
+        const arbor = dendriticArbors.find(a => a.rootId === outerNodeId);
+        if (!arbor) return;
+
+        arbor.segments.forEach((seg, idx) => {
+          if (dendriticSurges.length < 24) {
+            dendriticSurges.push({
+              segment: seg,
+              progress: 0,
+              speed: (0.026 + (idx % 2) * 0.008) * pulseSpeedFactor
+            });
+          }
+        });
+      }
+
+      function emitMicroArc(x: number, y: number) {
+        const angle = Math.random() * Math.PI * 2;
+        const reach = 10 + Math.random() * 18;
+        microArcs.push({
+          x1: x, y1: y,
+          x2: x + Math.cos(angle) * reach,
+          y2: y + Math.sin(angle) * reach,
+          life: 1.0,
+          color: Math.random() > 0.3 ? "#00f0ff" : "#ffffff"
+        });
+      }
+
+      function fireLocalBurst(startNodeId: number) {
+        const startNode = nodes[startNodeId] || nodes[0];
+        startNode.excitation = 1.6;
+
+        if (haloGlow) {
+          haloGlow.style.opacity = "0.7";
+          setTimeout(() => { if (haloGlow) haloGlow.style.opacity = "0.15"; }, 300);
+        }
+
+        const neighbors = neighborsMap[startNode.id] || [];
+        neighbors.forEach(targetId => {
+          spawnAxonPulse(startNode.id, targetId, 3, startNode.id);
+        });
+
+        if (startNode.type === 'outer') {
+          spawnDendriticSurge(startNode.id);
+        }
+      }
+
+      tiltCard.addEventListener("click", (e) => {
+        const rect = tiltCard.getBoundingClientRect();
+        const clickX = (e.clientX - rect.left) * (600 / rect.width);
+        const clickY = (e.clientY - rect.top) * (600 / rect.height);
+
+        let closestNode: BioNode | null = null;
+        let minDist = 99999;
+
+        nodes.forEach(node => {
+          const dist = Math.hypot(node.x - clickX, node.y - clickY);
+          if (dist < minDist) {
+            minDist = dist;
+            closestNode = node;
+          }
+        });
+
+        if (closestNode && minDist < 75) {
+          fireLocalBurst((closestNode as BioNode).id);
+        } else {
+          fireLocalBurst(0);
+        }
+      });
+
+      // 6. RENDERIZADO FLUIDO (60 FPS)
+      let lastTime = performance.now();
+      let lastEmissionTime = performance.now();
+
+      function resizeCanvas() {
+        const rect = tiltCard.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = (rect.width || 440) * dpr;
+        canvas.height = (rect.height || 440) * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener("resize", resizeCanvas);
+
+      let animId: number;
+
+      function loop(now: number) {
+        const dt = (now - lastTime) / 1000;
+        lastTime = now;
+
+        const rect = tiltCard.getBoundingClientRect();
+        const w = rect.width || 440;
+        const h = rect.height || 440;
+        const scale = w / 600;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // A. Generación Continua de Pulsos
+        const emissionInterval = 320;
+        if (now - lastEmissionTime >= emissionInterval) {
+          lastEmissionTime = now;
+          const randomOriginNode = nodes[Math.floor(Math.random() * nodes.length)];
+          const neighbors = neighborsMap[randomOriginNode.id] || [];
+
+          if (neighbors.length > 0) {
+            const randomTarget = neighbors[Math.floor(Math.random() * neighbors.length)];
+            const hops = Math.floor(2 + Math.random() * 3);
+            spawnAxonPulse(randomOriginNode.id, randomTarget, hops, randomOriginNode.id);
+          }
+        }
+
+        // B. Pulsos Axónicos
+        for (let i = pulses.length - 1; i >= 0; i--) {
+          const p = pulses[i];
+          p.progress += p.speed;
+
+          const nFrom = nodes[p.fromId];
+          const nTo = nodes[p.toId];
+
+          const currX = (nFrom.x + (nTo.x - nFrom.x) * p.progress) * scale;
+          const currY = (nFrom.y + (nTo.y - nFrom.y) * p.progress) * scale;
+
+          ctx.beginPath();
+          ctx.arc(currX, currY, 3.2, 0, Math.PI * 2);
+          ctx.fillStyle = "#ffffff";
+          ctx.shadowColor = "#00f0ff";
+          ctx.shadowBlur = 9;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          if (p.progress >= 1.0) {
+            nTo.excitation = Math.min(nTo.excitation + 0.6, 1.5);
+
+            if (p.hopsRemaining > 1) {
+              const allNeighbors = neighborsMap[nTo.id] || [];
+              const eligible = allNeighbors.filter(id => id !== p.fromId);
+
+              if (nTo.type === 'outer' && Math.random() < 0.45) {
+                spawnDendriticSurge(nTo.id);
+              } else if (eligible.length > 0) {
+                const nextTarget = eligible[Math.floor(Math.random() * eligible.length)];
+                spawnAxonPulse(nTo.id, nextTarget, p.hopsRemaining - 1, nTo.id);
+              }
+            } else {
+              if (nTo.type === 'outer' && Math.random() < 0.6) {
+                spawnDendriticSurge(nTo.id);
+              }
+            }
+
+            pulses.splice(i, 1);
+          }
+        }
+
+        // C. Descargas Dendríticas
+        for (let i = dendriticSurges.length - 1; i >= 0; i--) {
+          const ds = dendriticSurges[i];
+          ds.progress += ds.speed;
+
+          const seg = ds.segment;
+          let px, py;
+          if (seg.cp) {
+            const invT = 1 - ds.progress;
+            px = invT * invT * seg.from.x + 2 * invT * ds.progress * seg.cp.x + ds.progress * ds.progress * seg.to.x;
+            py = invT * invT * seg.from.y + 2 * invT * ds.progress * seg.cp.y + ds.progress * ds.progress * seg.to.y;
+          } else {
+            px = seg.from.x + (seg.to.x - seg.from.x) * ds.progress;
+            py = seg.from.y + (seg.to.y - seg.from.y) * ds.progress;
+          }
+
+          ctx.beginPath();
+          ctx.arc(px * scale, py * scale, 2.3, 0, Math.PI * 2);
+          ctx.fillStyle = "#00f0ff";
+          ctx.shadowColor = "#00f0ff";
+          ctx.shadowBlur = 7;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          if (ds.progress >= 1.0) {
+            if (seg.isTerminal) {
+              emitMicroArc(seg.to.x * scale, seg.to.y * scale);
+            }
+            dendriticSurges.splice(i, 1);
+          }
+        }
+
+        // D. Micro-Arcos
+        for (let i = microArcs.length - 1; i >= 0; i--) {
+          const ma = microArcs[i];
+          ma.life -= dt * 4.0;
+          if (ma.life <= 0) {
+            microArcs.splice(i, 1);
+            continue;
+          }
+
+          ctx.strokeStyle = ma.color;
+          ctx.lineWidth = 1.5 * ma.life;
+          ctx.shadowColor = "#00f0ff";
+          ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.moveTo(ma.x1, ma.y1);
+          ctx.lineTo(ma.x2, ma.y2);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+
+        // E. Palpitación de Somas SVG
+        nodes.forEach(node => {
+          if (node.excitation > 0.01) {
+            node.excitation *= 0.93;
+          } else {
+            node.excitation = 0;
+          }
+
+          const pulseFactor = 1 + (node.excitation * pulseIntensityMultiplier);
+          const currentRadius = node.baseR * pulseFactor;
+
+          if (node.element) {
+            node.element.setAttribute("r", currentRadius.toFixed(1));
+          }
+          if (node.haloElement) {
+            node.haloElement.setAttribute("r", (currentRadius * 1.85).toFixed(1));
+            node.haloElement.setAttribute("opacity", (node.excitation * 0.75).toFixed(2));
+          }
+        });
+
+        if (hudPulseCount) {
+          hudPulseCount.textContent = (pulses.length + dendriticSurges.length).toString();
+        }
+
+        animId = requestAnimationFrame(loop);
+      }
+
+      // 7. INCLINACIÓN 3D TILT AL PASAR EL CURSOR
+      const maxTilt = 16;
+      tiltCard.addEventListener("mousemove", (e) => {
+        const rect = tiltCard.getBoundingClientRect();
+        const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+        const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+
+        const rotX = -yPct * (maxTilt * 2);
+        const rotY = xPct * (maxTilt * 2);
+
+        tiltWrap.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.03, 1.03, 1.03)`;
+      });
+
+      tiltCard.addEventListener("mouseleave", () => {
+        tiltWrap.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+      });
+
+      // Inicialización
+      drawAxonMesh();
+      buildDendriticArborizations();
+      createSomaElements();
+      resizeCanvas();
+      animId = requestAnimationFrame(loop);
+
+      // Limpieza en desmontaje Astro
+      document.addEventListener('astro:before-swap', () => {
+        if (animId) cancelAnimationFrame(animId);
+        window.removeEventListener("resize", resizeCanvas);
+      }, { once: true });
+    }
+
+    function initAllBioHybrids() {
+      document.querySelectorAll<HTMLElement>('.bio-hybrid-root').forEach(root => {
+        setupBioHybridInstance(root);
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initAllBioHybrids);
+    } else {
+      initAllBioHybrids();
+    }
+    document.addEventListener("astro:page-load", initAllBioHybrids);
+  })();
+</script>

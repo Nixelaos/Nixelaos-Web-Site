@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Process from '../components/Process.astro';
+import Footer from '../components/Footer.astro';
+import BioNeuralCorona from '../components/BioNeuralCorona.astro';
+import { ArrowRight, Workflow, ShieldCheck } from 'lucide-react';
+---
+
+<Layout
+  title="Metodología y Proceso de Trabajo | Nixelaos Tech"
+  description="Conozca nuestro marco metodológico de trabajo: diagnóstico exhaustivo, arquitectura técnica, implementación ágil con CI/CD y soporte proactivo 24/7."
+>
+  <Navbar />
+  <main class="flex-grow">
+    
+    <!-- Hero / Encabezado de la Vista de Metodología -->
+    <section class="pt-12 pb-6 text-center max-w-4xl mx-auto px-4 sm:px-6 relative">
+      
+      <!-- Objeto Interactivo de Corona Dendrítica en la pantalla -->
+      <div class="mb-4">
+        <BioNeuralCorona size="sm" />
+      </div>
+
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-800/60 text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-4 shadow-inner">
+        <Workflow className="w-3.5 h-3.5 text-cyan-400" />
+        <span>Rigor Metodológico & Calidad Garantizada</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+        Un Proceso Probado para <br />
+        <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent">
+          Entregas Impecables y Sin Riesgos
+        </span>
+      </h1>
+      <p class="text-lg text-slate-300 max-w-2xl mx-auto">
+        Trabajamos bajo marcos de trabajo ágiles y estándares de ingeniería reconocidos internacionalmente para asegurar transparencia total, control de costos y cumplimiento de plazos.
+      </p>
+    </section>
+
+    <!-- Componente de Proceso con los 4 Pasos Detallados -->
+    <Process />
+
+    <!-- Sección de Garantías y Compromiso en Azul Marino -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+        <div class="p-6 rounded-2xl bg-[#091a32]/75 border border-cyan-950/80 shadow-md text-center backdrop-blur-md">
+          <div class="w-10 h-10 rounded-xl bg-cyan-950/80 text-cyan-400 flex items-center justify-center mx-auto mb-3 border border-cyan-800/50">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <h4 class="font-bold text-white mb-1">Cero Costos Ocultos</h4>
+          <p class="text-xs text-slate-300">Presupuestos cerrados con alcance y entregables minuciosamente documentados.</p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-[#091a32]/75 border border-cyan-950/80 shadow-md text-center backdrop-blur-md">
+          <div class="w-10 h-10 rounded-xl bg-cyan-950/80 text-cyan-400 flex items-center justify-center mx-auto mb-3 border border-cyan-800/50">
+            <Workflow className="w-5 h-5" />
+          </div>
+          <h4 class="font-bold text-white mb-1">Demos Periódicas</h4>
+          <p class="text-xs text-slate-300">Revisiones de avance cada sprint para validar funcionalidades en tiempo real.</p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-[#091a32]/75 border border-cyan-950/80 shadow-md text-center backdrop-blur-md">
+          <div class="w-10 h-10 rounded-xl bg-cyan-950/80 text-cyan-400 flex items-center justify-center mx-auto mb-3 border border-cyan-800/50">
+            <ArrowRight className="w-5 h-5" />
+          </div>
+          <h4 class="font-bold text-white mb-1">Transferencia y Código</h4>
+          <p class="text-xs text-slate-300">Entrega de repositorios limpios, manuales técnicos y capacitación a su equipo.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+</Layout>

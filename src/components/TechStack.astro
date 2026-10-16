@@ -1,0 +1,67 @@
+---
+import { Terminal, Code, Cloud, Database, Cpu } from 'lucide-react';
+
+const techCategories = [
+  {
+    category: 'Backend & APIs',
+    icon: Terminal,
+    technologies: ['Node.js', 'TypeScript', 'Python', 'FastAPI', 'Go', 'NestJS', 'RESTful APIs', 'GraphQL']
+  },
+  {
+    category: 'Frontend & Web',
+    icon: Code,
+    technologies: ['React', 'Astro', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Vite', 'HTML5 Semántico']
+  },
+  {
+    category: 'Cloud & DevOps',
+    icon: Cloud,
+    technologies: ['AWS (ECS, S3, RDS)', 'Oracle Cloud (OCI)', 'Docker', 'Kubernetes', 'CI/CD Pipelines', 'Terraform', 'Nginx']
+  },
+  {
+    category: 'Bases de Datos & Caché',
+    icon: Database,
+    technologies: ['PostgreSQL', 'MySQL', 'Redis', 'MongoDB', 'Supabase', 'SQL Tuning', 'Backups Automáticos']
+  },
+  {
+    category: 'Linux & Servidores',
+    icon: Cpu,
+    technologies: ['Ubuntu Server', 'Debian', 'Hardening SSH', 'VPNs WireGuard', 'Grafana', 'Prometheus', 'Firewalls UFW']
+  }
+];
+---
+
+<section id="tecnologias" class="py-12 md:py-20 bg-transparent relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Grid de Categorías con Pills en Azul Marino -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {techCategories.map((group, index) => {
+        const CategoryIcon = group.icon;
+        const isFifth = index === 4;
+        return (
+          <div class={`bg-[#091a32]/75 border border-cyan-950/80 rounded-2xl p-6 hover:border-cyan-500/50 hover:bg-[#0c2340]/90 transition-all duration-300 shadow-md backdrop-blur-md ${isFifth ? 'md:col-span-2 lg:col-span-1' : ''}`}>
+            <!-- Título de Categoría -->
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-10 h-10 rounded-lg bg-cyan-950/70 border border-cyan-800/60 flex items-center justify-center text-cyan-400">
+                <CategoryIcon className="w-5 h-5" />
+              </div>
+              <h3 class="text-base font-bold text-white">
+                {group.category}
+              </h3>
+            </div>
+
+            <!-- Lista de Pills / Etiquetas -->
+            <div class="flex flex-wrap gap-2">
+              {group.technologies.map((tech) => (
+                <span class="px-3 py-1.5 rounded-lg bg-[#051122]/90 border border-cyan-950/90 text-slate-300 text-xs font-medium hover:border-cyan-500/50 hover:text-white hover:bg-cyan-950/40 transition-all shadow-sm">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+  </div>
+</section>

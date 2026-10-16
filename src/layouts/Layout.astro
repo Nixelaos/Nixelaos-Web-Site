@@ -1,0 +1,150 @@
+---
+import PageLoader from '../components/PageLoader.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  theme?: 'dark' | 'light';
+}
+
+const {
+  title = "Nixelaos Tech | Servicios TI, Infraestructura Cloud & Consultoría B2B",
+  description = "Consultoría tecnológica estratégica, desarrollo de software a medida, infraestructura cloud resiliente y soporte especializado para empresas que exigen continuidad y escalabilidad.",
+  image = "/images/logo.png",
+  theme = "dark"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://nixelaos.com");
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Primario -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content={theme === 'light' ? '#ffffff' : '#030d1a'} />
+
+    <!-- Open Graph / LinkedIn / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class={`${theme === 'light' ? 'bg-white text-slate-800' : 'bg-[#030d1a] text-slate-100'} font-sans antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col overflow-x-hidden relative`}>
+    
+    <!-- Símbolo de Carga al Navegar con Logo (Foto 1) -->
+    <PageLoader />
+
+    {theme === 'light' ? (
+      <!-- Fondo Blanco Limpio con Retícula Micro-Electrónica y Resplandor Ambiental Sutil -->
+      <div class="fixed inset-0 overflow-hidden pointer-events-none -z-20 bg-white">
+        <!-- Retícula Micro-Electrónica Lab -->
+        <div class="absolute inset-0 bg-[radial-gradient(#0284c7_1.2px,transparent_1.2px)] [background-size:28px_28px] opacity-15"></div>
+        <!-- Resplandores Atmosféricos de Laboratorio -->
+        <div class="absolute -top-24 -left-20 w-[650px] h-[550px] bg-gradient-to-tr from-cyan-200/35 via-sky-100/30 to-transparent blur-[120px] rounded-full"></div>
+        <div class="absolute top-1/3 -right-24 w-[600px] h-[500px] bg-gradient-to-bl from-blue-100/30 via-cyan-100/25 to-transparent blur-[130px] rounded-full"></div>
+        <div class="absolute -bottom-20 left-1/4 w-[700px] h-[500px] bg-gradient-to-r from-cyan-100/30 via-sky-100/30 to-transparent blur-[110px] rounded-full"></div>
+      </div>
+    ) : (
+      <!-- Fondo de Efecto de Mar en Azul Marino Profundo (Corrientes Dinámicas Rápidas) -->
+      <div class="fixed inset-0 overflow-hidden pointer-events-none -z-20">
+        <!-- Corriente 1: Azul Océano Eléctrico -->
+        <div class="water-blob-1 absolute -top-24 -left-20 w-[650px] h-[550px] bg-gradient-to-tr from-cyan-500/20 via-blue-600/25 to-sky-400/15 blur-[120px] rounded-full will-change-transform"></div>
+        
+        <!-- Corriente 2: Azul Marino Aguamarina -->
+        <div class="water-blob-2 absolute top-1/3 -right-24 w-[600px] h-[500px] bg-gradient-to-bl from-blue-700/25 via-cyan-600/20 to-teal-500/15 blur-[130px] rounded-full will-change-transform"></div>
+        
+        <!-- Corriente 3: Resplandor Marino Profundo -->
+        <div class="water-blob-3 absolute -bottom-20 left-1/4 w-[700px] h-[500px] bg-gradient-to-r from-cyan-400/18 via-blue-800/20 to-sky-500/20 blur-[110px] rounded-full will-change-transform"></div>
+        
+        <!-- Rejilla digital submarina sutil -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#00f5ff05_1px,transparent_1px),linear-gradient(to_bottom,#00f5ff05_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+      </div>
+    )}
+
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* Animaciones Rápidas y Fluidas de Corrientes Marinas en Azul Marino */
+  @keyframes waterMotionFast1 {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    }
+    30% {
+      transform: translate3d(100px, -60px, 0) scale(1.18) rotate(12deg);
+    }
+    60% {
+      transform: translate3d(-80px, 70px, 0) scale(0.92) rotate(-8deg);
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes waterMotionFast2 {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1.1) rotate(0deg);
+    }
+    35% {
+      transform: translate3d(-120px, 80px, 0) scale(0.9) rotate(-15deg);
+    }
+    70% {
+      transform: translate3d(90px, -70px, 0) scale(1.22) rotate(10deg);
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1.1) rotate(0deg);
+    }
+  }
+
+  @keyframes waterMotionFast3 {
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.95);
+    }
+    50% {
+      transform: translate3d(-90px, -80px, 0) scale(1.25);
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(0.95);
+    }
+  }
+
+  .water-blob-1 {
+    animation: waterMotionFast1 5.5s ease-in-out infinite alternate;
+  }
+
+  .water-blob-2 {
+    animation: waterMotionFast2 4.5s ease-in-out infinite alternate;
+  }
+
+  .water-blob-3 {
+    animation: waterMotionFast3 3.8s ease-in-out infinite alternate;
+  }
+</style>

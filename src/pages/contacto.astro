@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import BioNeuralCorona from '../components/BioNeuralCorona.astro';
+---
+
+<Layout
+  title="Contacto & Diagnóstico TI Corporativo | Nixelaos Tech"
+  description="Contáctenos para cotizar su proyecto de software, migración a la nube o soporte de infraestructura. Respuesta garantizada en menos de 24 horas laborables."
+>
+  <Navbar />
+  <main class="flex-grow pt-8 pb-12">
+    <!-- Objeto Interactivo de Corona Dendrítica en la pantalla de contacto -->
+    <div class="mb-2">
+      <BioNeuralCorona size="sm" />
+    </div>
+
+    <Contact />
+  </main>
+  <Footer />
+</Layout>

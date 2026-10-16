@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Nixelaos Tech | Servicios TI, Infraestructura Cloud & Desarrollo B2B"
+  description="Consultoría tecnológica de alto impacto para empresas. Desarrollo de software a medida, arquitectura cloud, DevOps, optimización de bases de datos y soporte 24/7."
+  theme="light"
+>
+  <Navbar theme="light" />
+  <main class="flex-grow flex flex-col justify-center">
+    <Hero />
+  </main>
+  <Footer theme="light" />
+</Layout>

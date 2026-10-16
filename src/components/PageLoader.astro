@@ -1,0 +1,104 @@
+---
+---
+
+<!-- Símbolo de Carga al Navegar en la Página con Foto 1 (Engranaje Geodésico) -->
+<div
+  id="page-loader"
+  class="fixed inset-0 z-[9999] bg-[#030d1a]/85 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none"
+  aria-hidden="true"
+>
+  <div class="relative flex flex-col items-center justify-center">
+    <!-- Resplandor celeste pulsante -->
+    <div class="absolute w-28 h-28 rounded-full bg-cyan-400/25 blur-2xl animate-pulse"></div>
+    
+    <!-- Símbolo de Carga (Foto 1) con Giro Continuo -->
+    <div class="relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
+      <img
+        src="/images/logo.png"
+        alt="Cargando..."
+        class="w-full h-full object-contain animate-loader-spin select-none drop-shadow-[0_0_16px_rgba(0,245,255,0.7)]"
+      />
+    </div>
+
+    <!-- Etiqueta de Carga -->
+    <div class="mt-4 flex items-center gap-2">
+      <span class="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+      <span class="text-xs font-semibold uppercase tracking-widest text-cyan-300 font-mono">
+        Cargando...
+      </span>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes loaderSpin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-loader-spin {
+    animation: loaderSpin 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const loader = document.getElementById('page-loader');
+    if (!loader) return;
+
+    function showLoader() {
+      loader.classList.remove('opacity-0', 'pointer-events-none');
+      loader.classList.add('opacity-100', 'pointer-events-auto');
+    }
+
+    function hideLoader() {
+      loader.classList.remove('opacity-100', 'pointer-events-auto');
+      loader.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    // Ocultar cuando la página termine de cargar
+    if (document.readyState === 'complete') {
+      hideLoader();
+    } else {
+      window.addEventListener('load', hideLoader);
+    }
+
+    // Manejar botón Atrás/Adelante del navegador
+    window.addEventListener('pageshow', (event) => {
+      hideLoader();
+    });
+
+    // Interceptar clics en enlaces internos para mostrar el loader al navegar
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+
+      const link = target.closest('a');
+      if (!link) return;
+
+      const href = link.getAttribute('href');
+      const targetAttr = link.getAttribute('target');
+
+      // Validar enlace interno
+      if (
+        href &&
+        !href.startsWith('#') &&
+        !href.startsWith('mailto:') &&
+        !href.startsWith('tel:') &&
+        !href.startsWith('javascript:') &&
+        targetAttr !== '_blank'
+      ) {
+        try {
+          const destination = new URL(link.href, window.location.href);
+          if (destination.origin === window.location.origin) {
+            showLoader();
+          }
+        } catch (_) {}
+      }
+    });
+  })();
+</script>

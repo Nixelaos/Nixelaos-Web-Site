@@ -1,0 +1,425 @@
+---
+/**
+ * Componente: BioNeuralDendriticCrown.astro
+ * Descripción: Corona dendrítica bio-electrónica interactiva con red sináptica, potenciales de acción, chispas voltaicas y renderizado por Canvas 2D Retina.
+ * Framework: Astro con Tailwind CSS y TypeScript estricto.
+ */
+
+interface Props {
+  className?: string;
+  size?: string;
+  palette?: 'cyan' | 'violet' | 'emerald' | 'plasma';
+}
+
+const { className = '', size = 'w-80 h-80 sm:w-[460px] sm:h-[460px]', palette = 'cyan' } = Astro.props;
+---
+
+<div class={`bio-dendritic-wrapper relative flex items-center justify-center ${size} ${className}`} data-palette={palette}>
+  <!-- Fondo lumínico ambiental -->
+  <div class="absolute inset-4 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none transition-all duration-700 ambient-glow"></div>
+
+  <!-- Contenedor con efecto de inclinación 3D (Tilt) -->
+  <div class="bio-tilt-container w-full h-full relative cursor-pointer select-none" style="perspective: 1000px;">
+    <div class="bio-canvas-wrapper w-full h-full transition-transform duration-150 ease-out will-change-transform flex items-center justify-center">
+      <canvas class="bio-neural-canvas w-full h-full block"></canvas>
+    </div>
+  </div>
+
+  <!-- Telemetría HUD superpuesta -->
+  <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center px-3 py-1 bg-black/50 backdrop-blur-md rounded-lg border border-cyan-500/30 text-[10px] font-mono text-cyan-400 pointer-events-none opacity-90 shadow-lg">
+    <span class="status-text flex items-center gap-1.5">
+      <span class="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+      SYSTEM: ACTIVE
+    </span>
+    <span class="nodes-count text-slate-300">NODES: 0</span>
+  </div>
+</div>
+
+<script>
+  interface NodePoint {
+    x: number;
+    y: number;
+    baseX: number;
+    baseY: number;
+    radius: number;
+    pulsePhase: number;
+    isCore?: boolean;
+    isInner?: boolean;
+    isTerminal?: boolean;
+  }
+
+  interface DendriticBranch {
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    controlX: number;
+    controlY: number;
+    depth: number;
+  }
+
+  interface ActionPotential {
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    progress: number;
+    speed: number;
+  }
+
+  interface Spark {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+  }
+
+  const PALETTES = {
+    cyan: { primary: '#00f5ff', secondary: '#0066ff', core: '#ffffff', glow: 'rgba(0, 245, 255, 0.25)' },
+    violet: { primary: '#b537f2', secondary: '#5b13b9', core: '#ffffff', glow: 'rgba(181, 55, 242, 0.25)' },
+    emerald: { primary: '#00ff88', secondary: '#008844', core: '#ffffff', glow: 'rgba(0, 255, 136, 0.25)' },
+    plasma: { primary: '#ffaa00', secondary: '#ff3300', core: '#ffffff', glow: 'rgba(255, 170, 0, 0.25)' }
+  };
+
+  function initBioNeuralCanvas(wrapper: HTMLElement) {
+    if (wrapper.dataset.initialized === "true") return;
+    wrapper.dataset.initialized = "true";
+
+    const canvas = wrapper.querySelector('.bio-neural-canvas') as HTMLCanvasElement | null;
+    const tiltContainer = wrapper.querySelector('.bio-tilt-container') as HTMLElement | null;
+    const canvasWrapper = wrapper.querySelector('.bio-canvas-wrapper') as HTMLElement | null;
+    const ambientGlow = wrapper.querySelector('.ambient-glow') as HTMLElement | null;
+    const nodesCountLabel = wrapper.querySelector('.nodes-count') as HTMLElement | null;
+
+    if (!canvas || !tiltContainer || !canvasWrapper) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const paletteKey = (wrapper.dataset.palette || 'cyan') as keyof typeof PALETTES;
+    const colors = PALETTES[paletteKey] || PALETTES.cyan;
+
+    if (ambientGlow) {
+      ambientGlow.style.backgroundColor = colors.glow;
+    }
+
+    let animationFrameId: number;
+    let width = 0;
+    let height = 0;
+    let centerX = 0;
+    let centerY = 0;
+
+    // Estado del Mouse y Tropismo
+    const mouse = { x: -1000, y: -1000, active: false };
+    let time = 0;
+
+    // Estructuras de datos
+    let nodes: NodePoint[] = [];
+    let branches: DendriticBranch[] = [];
+    let potentials: ActionPotential[] = [];
+    let sparks: Spark[] = [];
+
+    function resize() {
+      const rect = canvasWrapper!.getBoundingClientRect();
+      width = rect.width || 300;
+      height = rect.height || 300;
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas!.width = width * dpr;
+      canvas!.height = height * dpr;
+      ctx!.scale(dpr, dpr);
+
+      centerX = width / 2;
+      centerY = height / 2;
+
+      buildNeuralNetwork();
+    }
+
+    function buildNeuralNetwork() {
+      nodes = [];
+      branches = [];
+
+      // 1. Soma Central
+      const coreNode: NodePoint = {
+        x: centerX,
+        y: centerY,
+        baseX: centerX,
+        baseY: centerY,
+        radius: width * 0.055,
+        pulsePhase: 0,
+        isCore: true
+      };
+      nodes.push(coreNode);
+
+      // 2. Anillo Neuronal Interno (6 Nodos)
+      const innerCount = 6;
+      const innerRadius = width * 0.18;
+      const innerNodes: NodePoint[] = [];
+
+      for (let i = 0; i < innerCount; i++) {
+        const angle = (i * 2 * Math.PI) / innerCount;
+        const x = centerX + innerRadius * Math.cos(angle);
+        const y = centerY + innerRadius * Math.sin(angle);
+        const node: NodePoint = { x, y, baseX: x, baseY: y, radius: width * 0.022, pulsePhase: i * 0.5, isInner: true };
+        nodes.push(node);
+        innerNodes.push(node);
+      }
+
+      // 3. Corona Dendrítica Externa (12 Nodos Periféricos)
+      const outerCount = 12;
+      const outerRadius = width * 0.36;
+      const outerNodes: NodePoint[] = [];
+
+      for (let i = 0; i < outerCount; i++) {
+        const angle = (i * 2 * Math.PI) / outerCount;
+        const x = centerX + outerRadius * Math.cos(angle);
+        const y = centerY + outerRadius * Math.sin(angle);
+        const node: NodePoint = { x, y, baseX: x, baseY: y, radius: width * 0.015, pulsePhase: i * 0.3, isTerminal: true };
+        nodes.push(node);
+        outerNodes.push(node);
+      }
+
+      if (nodesCountLabel) {
+        nodesCountLabel.textContent = `NODES: ${nodes.length}`;
+      }
+
+      // Conectar core con anillo interno
+      innerNodes.forEach(node => {
+        branches.push({ startX: coreNode.x, startY: coreNode.y, endX: node.x, endY: node.y, controlX: (coreNode.x + node.x) / 2, controlY: (coreNode.y + node.y) / 2, depth: 0 });
+      });
+
+      // Conectar anillo interno entre sí
+      innerNodes.forEach((node, i) => {
+        const next = innerNodes[(i + 1) % innerCount];
+        branches.push({ startX: node.x, startY: node.y, endX: next.x, endY: next.y, controlX: centerX + (node.x + next.x - 2 * centerX) * 0.3, controlY: centerY + (node.y + next.y - 2 * centerY) * 0.3, depth: 1 });
+      });
+
+      // Conectar anillo interno con corona dendrítica externa (Bifurcaciones)
+      outerNodes.forEach((outerNode, i) => {
+        const parentInner = innerNodes[Math.floor(i / 2) % innerCount];
+        const angle = (i * 2 * Math.PI) / outerCount;
+        
+        // Curva orgánica principal
+        const cpX = centerX + (outerRadius * 0.6) * Math.cos(angle + 0.15);
+        const cpY = centerY + (outerRadius * 0.6) * Math.sin(angle + 0.15);
+
+        branches.push({ startX: parentInner.x, startY: parentInner.y, endX: outerNode.x, endY: outerNode.y, controlX: cpX, controlY: cpY, depth: 2 });
+
+        // Ramificaciones terminales dendríticas
+        if (i % 2 === 0) {
+          const neighborOuter = outerNodes[(i + 1) % outerCount];
+          branches.push({ startX: outerNode.x, startY: outerNode.y, endX: neighborOuter.x, endY: neighborOuter.y, controlX: centerX + outerRadius * 1.05 * Math.cos(angle + Math.PI / outerCount), controlY: centerY + outerRadius * 1.05 * Math.sin(angle + Math.PI / outerCount), depth: 3 });
+        }
+      });
+    }
+
+    // Disparar potencial de acción (impulso sináptico)
+    function triggerActionPotential(targetX?: number, targetY?: number) {
+      if (branches.length === 0) return;
+      const randomBranch = branches[Math.floor(Math.random() * branches.length)];
+      potentials.push({
+        startX: randomBranch.startX,
+        startY: randomBranch.startY,
+        endX: randomBranch.endX,
+        endY: randomBranch.endY,
+        progress: 0,
+        speed: 0.02 + Math.random() * 0.03
+      });
+
+      // Si hacen click, generar chispas voltaicas
+      if (targetX !== undefined && targetY !== undefined) {
+        for (let i = 0; i < 8; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1 + Math.random() * 3;
+          sparks.push({
+            x: targetX,
+            y: targetY,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 0,
+            maxLife: 30 + Math.random() * 20,
+            size: 1.5 + Math.random() * 2
+          });
+        }
+      }
+    }
+
+    // Bucle de renderizado a 60 FPS
+    function render() {
+      time += 0.03;
+      ctx!.clearRect(0, 0, width, height);
+
+      // 1. Dibujar Conexiones Axónicas y Dendríticas
+      ctx!.lineWidth = 1.2;
+      branches.forEach(b => {
+        ctx!.strokeStyle = colors.secondary;
+        ctx!.globalAlpha = b.depth === 3 ? 0.35 : 0.55;
+        ctx!.beginPath();
+        ctx!.moveTo(b.startX, b.startY);
+        ctx!.quadraticCurveTo(b.controlX, b.controlY, b.endX, b.endY);
+        ctx!.stroke();
+      });
+
+      // 2. Actualizar y Dibujar Potenciales de Acción
+      ctx!.lineWidth = 2.5;
+      for (let i = potentials.length - 1; i >= 0; i--) {
+        const p = potentials[i];
+        p.progress += p.speed;
+
+        if (p.progress >= 1) {
+          potentials.splice(i, 1);
+          continue;
+        }
+
+        const currX = p.startX + (p.endX - p.startX) * p.progress;
+        const currY = p.startY + (p.endY - p.startY) * p.progress;
+
+        ctx!.strokeStyle = colors.core;
+        ctx!.globalAlpha = 0.9;
+        ctx!.beginPath();
+        ctx!.arc(currX, currY, 2.5, 0, Math.PI * 2);
+        ctx!.fillStyle = colors.primary;
+        ctx!.fill();
+      }
+
+      // 3. Actualizar y Dibujar Nodos (Somas y Terminaciones)
+      nodes.forEach(node => {
+        // Tropismo hacia el cursor
+        const dx = mouse.x - node.baseX;
+        const dy = mouse.y - node.baseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 120;
+
+        let targetX = node.baseX;
+        let targetY = node.baseY;
+
+        if (dist < maxDist && mouse.active) {
+          const force = (1 - dist / maxDist) * 15;
+          targetX += (dx / dist) * force;
+          targetY += (dy / dist) * force;
+        }
+
+        node.x += (targetX - node.x) * 0.1;
+        node.y += (targetY - node.y) * 0.1;
+
+        // Pulsación orgánica
+        const pulse = Math.sin(time * 2.5 + node.pulsePhase) * 0.35 + 1;
+        const currentRadius = node.radius * pulse;
+
+        // Halo de brillo del nodo
+        const gradient = ctx!.createRadialGradient(node.x, node.y, 0, node.x, node.y, currentRadius * 2.2);
+        gradient.addColorStop(0, colors.primary);
+        gradient.addColorStop(1, 'transparent');
+
+        ctx!.globalAlpha = node.isCore ? 0.6 : 0.3;
+        ctx!.fillStyle = gradient;
+        ctx!.beginPath();
+        ctx!.arc(node.x, node.y, currentRadius * 2.2, 0, Math.PI * 2);
+        ctx!.fill();
+
+        // Núcleo del nodo
+        ctx!.globalAlpha = 1;
+        ctx!.fillStyle = node.isCore ? colors.core : colors.primary;
+        ctx!.beginPath();
+        ctx!.arc(node.x, node.y, currentRadius, 0, Math.PI * 2);
+        ctx!.fill();
+      });
+
+      // 4. Actualizar y Dibujar Chispas Voltaicas
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life++;
+
+        if (s.life >= s.maxLife) {
+          sparks.splice(i, 1);
+          continue;
+        }
+
+        const alpha = 1 - s.life / s.maxLife;
+        ctx!.globalAlpha = alpha;
+        ctx!.fillStyle = colors.core;
+        ctx!.beginPath();
+        ctx!.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+
+      // Disparar impulsos espontáneos
+      if (Math.random() < 0.12) {
+        triggerActionPotential();
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    }
+
+    // Manejo de Eventos de Mouse e Inclinación 3D
+    function handleMouseMove(e: MouseEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+
+      // Efecto Tilt 3D
+      const xPct = mouse.x / rect.width - 0.5;
+      const yPct = mouse.y / rect.height - 0.5;
+      const MAX_ROT = 12;
+      tiltContainer!.style.transform = `rotateX(${-yPct * (MAX_ROT * 2)}deg) rotateY(${xPct * (MAX_ROT * 2)}deg) scale3d(1.04, 1.04, 1.04)`;
+    }
+
+    function handleMouseLeave() {
+      mouse.x = -1000;
+      mouse.y = -1000;
+      mouse.active = false;
+      tiltContainer!.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    }
+
+    function handleClick(e: MouseEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      triggerActionPotential(clickX, clickY);
+    }
+
+    // Registrar Eventos
+    tiltContainer.addEventListener('mousemove', handleMouseMove);
+    tiltContainer.addEventListener('mouseleave', handleMouseLeave);
+    tiltContainer.addEventListener('click', handleClick);
+
+    // Inicializar y arrancar loop
+    resize();
+    window.addEventListener('resize', resize);
+    animationFrameId = requestAnimationFrame(render);
+
+    // Guardar función de limpieza en el elemento para evitar memory leaks
+    (wrapper as any)._cleanupBioCanvas = () => {
+      window.removeEventListener('resize', resize);
+      tiltContainer.removeEventListener('mousemove', handleMouseMove);
+      tiltContainer.removeEventListener('mouseleave', handleMouseLeave);
+      tiltContainer.removeEventListener('click', handleClick);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }
+
+  // Ciclo de vida compatible con Astro (DOMContentLoaded, astro:page-load y astro:before-swap)
+  function initAllBioCanvases() {
+    const wrappers = document.querySelectorAll('.bio-dendritic-wrapper');
+    wrappers.forEach(wrapper => {
+      initBioNeuralCanvas(wrapper as HTMLElement);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initAllBioCanvases);
+  document.addEventListener('astro:page-load', initAllBioCanvases);
+  document.addEventListener('astro:before-swap', () => {
+    const wrappers = document.querySelectorAll('.bio-dendritic-wrapper');
+    wrappers.forEach(wrapper => {
+      if ((wrapper as any)._cleanupBioCanvas) {
+        (wrapper as any)._cleanupBioCanvas();
+      }
+    });
+  });
+</script>

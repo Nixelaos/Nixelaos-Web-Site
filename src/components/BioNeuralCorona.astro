@@ -1,0 +1,214 @@
+---
+interface Props {
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { className = "", size = "md" } = Astro.props;
+
+const sizeClasses = {
+  sm: "w-64 h-64 sm:w-72 sm:h-72",
+  md: "w-80 h-80 sm:w-[420px] sm:h-[420px]",
+  lg: "w-80 h-80 sm:w-[460px] sm:h-[460px]",
+}[size];
+---
+
+<!-- ========================================================================= -->
+<!-- CORONA DENDRÍTICA BIO-ELÉCTRICA (HTML5 + Tailwind CSS + TypeScript Nativo)   -->
+<!-- Sin imágenes externas • Sin dependencias pesadas • 60 FPS Canvas de Retina  -->
+<!-- ========================================================================= -->
+
+<div class={`bio-neural-wrapper relative flex flex-col items-center justify-center select-none ${className}`}>
+  
+  <div 
+    class={`bio-neural-container relative flex items-center justify-center ${sizeClasses} mx-auto cursor-crosshair overflow-hidden`}
+    style="perspective: 1200px;"
+  >
+    <!-- Halo de resplandor ambiental marino eléctrico -->
+    <div class="absolute inset-0 rounded-full bg-cyan-400/20 blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="absolute w-44 h-44 rounded-full bg-blue-600/25 blur-2xl pointer-events-none"></div>
+
+    <!-- Envoltorio 3D con Tilt reactivo al cursor -->
+    <div 
+      class="bio-tilt-card w-full h-full flex items-center justify-center transition-transform duration-100 ease-out will-change-transform"
+    >
+      <canvas 
+        class="bio-neural-canvas w-full h-full max-w-[460px] max-h-[460px] drop-shadow-[0_0_26px_rgba(0,245,255,0.7)]"
+      ></canvas>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function initBioCorona() {
+    const containers = document.querySelectorAll('.bio-neural-container');
+    
+    containers.forEach((container) => {
+      if ((container as any).__bioInit) return;
+      (container as any).__bioInit = true;
+
+      const canvas = container.querySelector('.bio-neural-canvas') as HTMLCanvasElement;
+      const tiltCard = container.querySelector('.bio-tilt-card') as HTMLElement;
+      if (!canvas || !tiltCard) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let width = 460, height = 460;
+      const dpr = window.devicePixelRatio || 1;
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        width = rect.width || 460;
+        height = rect.height || 460;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx!.scale(dpr, dpr);
+        buildNetwork();
+      }
+
+      // Estructuras de la Corona Dendrítica
+      const nodes: any[] = [];
+      const axons: any[] = [];
+      const dendriticTrees: any[] = [];
+      const mouse = { x: 0, y: 0, active: false };
+
+      function buildNetwork() {
+        nodes.length = 0; axons.length = 0; dendriticTrees.length = 0;
+        const cx = width / 2, cy = height / 2;
+
+        // Soma Central
+        nodes.push({ id: 0, x: cx, y: cy, radius: 14, conns: [] });
+
+        // Anillo 1: 6 Interneuronas
+        for (let i = 0; i < 6; i++) {
+          const a = (i * 2 * Math.PI) / 6;
+          nodes.push({ id: nodes.length, x: cx + 46 * Math.cos(a), y: cy + 46 * Math.sin(a), radius: 7.5, conns: [] });
+        }
+
+        // Anillo 2: 12 Nodos Periféricos (Anclas de Dendritas)
+        for (let j = 0; j < 12; j++) {
+          const a = -Math.PI / 2 + (j * 2 * Math.PI) / 12;
+          nodes.push({ id: nodes.length, x: cx + 96 * Math.cos(a), y: cy + 96 * Math.sin(a), radius: 6.0, conns: [], angle: a });
+        }
+
+        // Conexiones Axonales
+        function link(u: number, v: number) {
+          nodes[u].conns.push(v); nodes[v].conns.push(u);
+          axons.push({ from: nodes[u], to: nodes[v] });
+        }
+        for (let i = 1; i <= 6; i++) link(0, i);
+        for (let i = 1; i <= 6; i++) { link(i, i === 6 ? 1 : i + 1); link(i, ((i + 1) % 6) + 1); }
+        for (let i = 1; i <= 6; i++) {
+          const periphs = nodes.slice(7).sort((a,b) => Math.hypot(nodes[i].x - a.x, nodes[i].y - a.y) - Math.hypot(nodes[i].x - b.x, nodes[i].y - b.y));
+          for (let k = 0; k < 4; k++) link(i, periphs[k].id);
+        }
+
+        // Generar Ramas de la Corona Dendrítica
+        nodes.slice(7).forEach((anchor) => {
+          const tree: any = { branches: [] };
+          function branch(x: number, y: number, ang: number, len: number, depth: number) {
+            const ex = x + len * Math.cos(ang);
+            const ey = y + len * Math.sin(ang);
+            tree.branches.push({ sx: x, sy: y, ex, ey, curEx: ex, curEy: ey, ang, depth, isTerminal: depth >= 3 });
+            if (depth < 3) {
+              branch(ex, ey, ang - 0.42, len * 0.72, depth + 1);
+              branch(ex, ey, ang + 0.42, len * 0.72, depth + 1);
+            }
+          }
+          branch(anchor.x, anchor.y, anchor.angle, 60, 1);
+          dendriticTrees.push(tree);
+        });
+      }
+
+      // Animación continua y Bio-Tropismo
+      let last = performance.now();
+      let animId: number;
+
+      function loop(now: number) {
+        last = now;
+        ctx!.clearRect(0, 0, width, height);
+
+        // Axones
+        ctx!.strokeStyle = "#00f5ff";
+        ctx!.globalAlpha = 0.55;
+        ctx!.lineWidth = 1.8;
+        axons.forEach(a => {
+          ctx!.beginPath(); ctx!.moveTo(a.from.x, a.from.y); ctx!.lineTo(a.to.x, a.to.y); ctx!.stroke();
+        });
+
+        // Corona Dendrítica con Tropismo hacia el Cursor
+        dendriticTrees.forEach(t => {
+          t.branches.forEach((b: any) => {
+            let tx = b.ex, ty = b.ey;
+            if (mouse.active) {
+              const d = Math.hypot(mouse.x - tx, mouse.y - ty);
+              if (d < 200) {
+                const pull = (1 - d / 200) * 0.35;
+                tx += (mouse.x - tx) * pull; ty += (mouse.y - ty) * pull;
+              }
+            }
+            b.curEx += (tx - b.curEx) * 0.15;
+            b.curEy += (ty - b.curEy) * 0.15;
+
+            ctx!.beginPath();
+            ctx!.moveTo(b.sx, b.sy);
+            ctx!.lineTo(b.curEx, b.curEy);
+            ctx!.strokeStyle = "#00f5ff";
+            ctx!.lineWidth = Math.max(3.2 - b.depth * 0.8, 1.2);
+            ctx!.globalAlpha = 0.85;
+            ctx!.stroke();
+
+            // Botón terminal brillante
+            if (b.isTerminal) {
+              ctx!.beginPath();
+              ctx!.arc(b.curEx, b.curEy, 3.2, 0, Math.PI * 2);
+              ctx!.fillStyle = "#ffffff";
+              ctx!.fill();
+            }
+          });
+        });
+
+        // Somas (Nodos celulares)
+        nodes.forEach(n => {
+          ctx!.beginPath();
+          ctx!.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+          ctx!.fillStyle = "#0066ff";
+          ctx!.fill();
+          ctx!.strokeStyle = "#ffffff";
+          ctx!.lineWidth = 1.5;
+          ctx!.stroke();
+        });
+
+        animId = requestAnimationFrame(loop);
+      }
+
+      // Interacción de Inclinación 3D (Tilt)
+      container.addEventListener("mousemove", (e: any) => {
+        const r = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.active = true;
+        const xPct = (e.clientX - r.left) / r.width - 0.5;
+        const yPct = (e.clientY - r.top) / r.height - 0.5;
+        tiltCard.style.transform = `rotateX(${(-yPct * 26).toFixed(2)}deg) rotateY(${(xPct * 26).toFixed(2)}deg) scale3d(1.04, 1.04, 1.04)`;
+      });
+
+      container.addEventListener("mouseleave", () => {
+        mouse.active = false;
+        tiltCard.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+      });
+
+      window.addEventListener("resize", resize);
+      resize();
+      animId = requestAnimationFrame(loop);
+    });
+  }
+
+  // Inicialización segura en navegación Astro
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBioCorona);
+  } else {
+    initBioCorona();
+  }
+  document.addEventListener('astro:page-load', initBioCorona);
+</script>
