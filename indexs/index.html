@@ -210,9 +210,9 @@
                 <div>
                     <div class="flex justify-between items-center text-xs mb-1.5">
                         <label for="input-tilt-sens" class="text-slate-700">Sensibilidad Tilt 3D</label>
-                        <span id="txt-tilt-sens" class="font-mono text-cyan-600 font-bold">16°</span>
+                        <span id="txt-tilt-sens" class="font-mono text-cyan-600 font-bold">0°</span>
                     </div>
-                    <input type="range" id="input-tilt-sens" min="0" max="35" value="16"
+                    <input type="range" id="input-tilt-sens" min="0" max="35" value="0"
                         class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
                 </div>
 
@@ -681,6 +681,55 @@
             let lastTime = performance.now();
             let lastEmissionTime = performance.now();
 
+            let animId = null;
+            let isVisibleInViewport = true;
+            let isDocumentActive = !document.hidden;
+            let isLoopRunning = false;
+
+            function canAnimate() {
+                return isDocumentActive && isVisibleInViewport;
+            }
+
+            function stopAnimation() {
+                if (!isLoopRunning && animId === null) return;
+                isLoopRunning = false;
+                if (animId !== null) {
+                    cancelAnimationFrame(animId);
+                    animId = null;
+                }
+                const rect = kineticCard.getBoundingClientRect();
+                ctx.clearRect(0, 0, rect.width, rect.height);
+                pulses.length = 0;
+                dendriticSurges.length = 0;
+                microArcs.length = 0;
+                nodes.forEach(node => {
+                    node.excitation = 0;
+                    if (node.element) node.element.setAttribute("r", node.baseR.toFixed(1));
+                    if (node.haloElement) {
+                        node.haloElement.setAttribute("r", (node.baseR * 1.85).toFixed(1));
+                        node.haloElement.setAttribute("opacity", "0");
+                    }
+                });
+                if (hudPulseCount) hudPulseCount.textContent = "0";
+            }
+
+            function startAnimation() {
+                if (isLoopRunning) return;
+                if (!canAnimate()) return;
+                isLoopRunning = true;
+                lastTime = performance.now();
+                lastEmissionTime = performance.now();
+                animId = requestAnimationFrame(loop);
+            }
+
+            function syncActivityState() {
+                if (canAnimate()) {
+                    startAnimation();
+                } else {
+                    stopAnimation();
+                }
+            }
+
             function resizeCanvas() {
                 const rect = kineticCard.getBoundingClientRect();
                 const dpr = window.devicePixelRatio || 1;
@@ -691,6 +740,8 @@
             window.addEventListener("resize", resizeCanvas);
 
             function loop(now) {
+                if (!isLoopRunning) return;
+
                 const dt = (now - lastTime) / 1000;
                 lastTime = now;
 
@@ -843,7 +894,9 @@
                 const totalActive = pulses.length + dendriticSurges.length;
                 if (hudPulseCount) hudPulseCount.textContent = totalActive.toString();
 
-                requestAnimationFrame(loop);
+                if (isLoopRunning) {
+                    animId = requestAnimationFrame(loop);
+                }
             }
 
             // 7. INCLINACIÓN 3D TILT REACTIVA AL CURSOR
@@ -1008,12 +1061,39 @@
                 });
             });
 
+            // Control Inteligente de Visibilidad (Background tab / app / pantalla apagada)
+            function handleVisibilityChange() {
+                isDocumentActive = !document.hidden;
+                syncActivityState();
+            }
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+
+            window.addEventListener("pagehide", () => {
+                isDocumentActive = false;
+                syncActivityState();
+            });
+            window.addEventListener("pageshow", () => {
+                isDocumentActive = !document.hidden;
+                syncActivityState();
+            });
+
+            // IntersectionObserver para pausar si sale de la pantalla
+            if (typeof IntersectionObserver !== "undefined") {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        isVisibleInViewport = entry.isIntersecting;
+                        syncActivityState();
+                    });
+                }, { threshold: 0.05 });
+                observer.observe(kineticCard);
+            }
+
             // Inicialización General
             drawAxonMesh();
             buildDendriticArborizations();
             createSomaElements();
             resizeCanvas();
-            requestAnimationFrame(loop);
+            syncActivityState();
         })();
     </script>
 </body>

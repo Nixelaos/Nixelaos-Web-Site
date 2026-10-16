@@ -504,9 +504,66 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
       }
       window.addEventListener("resize", resizeCanvas);
 
-      let animId: number;
+      let animId: number | null = null;
+      let isVisibleInViewport = true;
+      let isDocumentActive = typeof document !== 'undefined' ? !document.hidden : true;
+      let isLoopRunning = false;
+
+      function canAnimate(): boolean {
+        return isDocumentActive && isVisibleInViewport;
+      }
+
+      function stopAnimation() {
+        if (!isLoopRunning && animId === null) return;
+        isLoopRunning = false;
+        if (animId !== null) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+
+        // Limpiar canvas para que no queden estelas ni partículas estáticas
+        const rect = tiltCard.getBoundingClientRect();
+        const w = rect.width || 440;
+        const h = rect.height || 440;
+        ctx.clearRect(0, 0, w, h);
+
+        // Vaciar colas de pulsos y arcos de forma inmediata
+        pulses.length = 0;
+        dendriticSurges.length = 0;
+        microArcs.length = 0;
+
+        // Resetear somas al tamaño basal en reposo
+        nodes.forEach(node => {
+          node.excitation = 0;
+          if (node.element) node.element.setAttribute("r", node.baseR.toFixed(1));
+          if (node.haloElement) {
+            node.haloElement.setAttribute("r", (node.baseR * 1.85).toFixed(1));
+            node.haloElement.setAttribute("opacity", "0");
+          }
+        });
+      }
+
+      function startAnimation() {
+        if (isLoopRunning) return;
+        if (!canAnimate()) return;
+
+        isLoopRunning = true;
+        lastTime = performance.now();
+        lastEmissionTime = performance.now();
+        animId = requestAnimationFrame(loop);
+      }
+
+      function syncActivityState() {
+        if (canAnimate()) {
+          startAnimation();
+        } else {
+          stopAnimation();
+        }
+      }
 
       function loop(now: number) {
+        if (!isLoopRunning) return;
+
         const dt = (now - lastTime) / 1000;
         lastTime = now;
 
@@ -645,12 +702,18 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
           }
         });
 
-        animId = requestAnimationFrame(loop);
+        if (isLoopRunning) {
+          animId = requestAnimationFrame(loop);
+        }
       }
 
-      // 7. INCLINACIÓN 3D TILT AL PASAR EL CURSOR
-      const maxTilt = 16;
+      // 7. INCLINACIÓN 3D TILT AL PASAR EL CURSOR (Sensibilidad en 0°)
+      const maxTilt = 0;
       tiltCard.addEventListener("mousemove", (e) => {
+        if (maxTilt === 0) {
+          tiltWrap.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+          return;
+        }
         const rect = tiltCard.getBoundingClientRect();
         const xPct = (e.clientX - rect.left) / rect.width - 0.5;
         const yPct = (e.clientY - rect.top) / rect.height - 0.5;
@@ -665,16 +728,50 @@ const uniqueId = `bio-hybrid-${Math.random().toString(36).substring(2, 9)}`;
         tiltWrap.style.transform = "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
       });
 
+      // 8. CONTROL INTELIGENTE DE VISIBILIDAD (Detener en segundo plano / pantalla apagada / otra app o pestaña)
+      function handleVisibilityChange() {
+        isDocumentActive = !document.hidden;
+        syncActivityState();
+      }
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      function handlePageHide() {
+        isDocumentActive = false;
+        syncActivityState();
+      }
+      function handlePageShow() {
+        isDocumentActive = !document.hidden;
+        syncActivityState();
+      }
+      window.addEventListener("pagehide", handlePageHide);
+      window.addEventListener("pageshow", handlePageShow);
+
+      // Intersection Observer: Suspender pulsos cuando el usuario hace scroll y sale del campo de visión
+      let observer: IntersectionObserver | null = null;
+      if (typeof IntersectionObserver !== "undefined") {
+        observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            isVisibleInViewport = entry.isIntersecting;
+            syncActivityState();
+          });
+        }, { threshold: 0.05 });
+        observer.observe(root);
+      }
+
       // Inicialización
       drawAxonMesh();
       buildDendriticArborizations();
       createSomaElements();
       resizeCanvas();
-      animId = requestAnimationFrame(loop);
+      syncActivityState();
 
       // Limpieza en desmontaje Astro
       document.addEventListener('astro:before-swap', () => {
-        if (animId) cancelAnimationFrame(animId);
+        stopAnimation();
+        if (observer) observer.disconnect();
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        window.removeEventListener("pagehide", handlePageHide);
+        window.removeEventListener("pageshow", handlePageShow);
         window.removeEventListener("resize", resizeCanvas);
       }, { once: true });
     }
