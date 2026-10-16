@@ -1,4 +1,5 @@
 ---
+import BioNeuralLogo from './BioNeuralLogo.astro';
 ---
 
 <!-- Símbolo de Carga al Navegar en la Página con Foto 1 (Engranaje Geodésico) -->
@@ -11,13 +12,9 @@
     <!-- Resplandor celeste pulsante -->
     <div class="absolute w-28 h-28 rounded-full bg-cyan-400/25 blur-2xl animate-pulse"></div>
     
-    <!-- Símbolo de Carga (Foto 1) con Giro Continuo -->
+    <!-- Símbolo de Carga Bio-Neuronal con Giro Continuo -->
     <div class="relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-      <img
-        src="/images/logo.png"
-        alt="Cargando..."
-        class="w-full h-full object-contain animate-loader-spin select-none drop-shadow-[0_0_16px_rgba(0,245,255,0.7)]"
-      />
+      <BioNeuralLogo size="w-full h-full" animate={false} className="animate-loader-spin select-none drop-shadow-[0_0_16px_rgba(0,245,255,0.7)]" />
     </div>
 
     <!-- Etiqueta de Carga -->

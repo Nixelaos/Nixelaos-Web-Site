@@ -1,0 +1,221 @@
+---
+/**
+ * Componente: BioNeuralLogo.astro
+ * Clon 1:1 Exacto en Miniatura de la Red Bio-Neuronal del Hero
+ * Nixelaos Tech - Vectorial Retina 600x600 viewBox
+ */
+
+interface Props {
+  size?: string;
+  className?: string;
+  animate?: boolean;
+}
+
+const {
+  size = "w-11 h-11",
+  className = "",
+  animate = true
+} = Astro.props;
+
+const uniqueId = `bio-clone-${Math.random().toString(36).substring(2, 8)}`;
+---
+
+<div class={`bio-logo-container relative flex items-center justify-center shrink-0 ${size} ${className}`}>
+  <!-- Halo bioluminiscente sutil -->
+  <div class={`absolute inset-0 rounded-full bg-cyan-400/20 blur-md pointer-events-none transition-all duration-300 ${animate ? 'group-hover:bg-cyan-400/40 group-hover:scale-110' : ''}`}></div>
+
+  <svg
+    viewBox="0 0 600 600"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class={`w-full h-full relative z-10 transition-transform duration-300 filter drop-shadow-[0_2px_8px_rgba(2,132,199,0.35)] ${animate ? 'group-hover:scale-105' : ''}`}
+  >
+    <defs>
+      <radialGradient id={`${uniqueId}-core`} cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="30%" stop-color="#38bdf8"/>
+        <stop offset="70%" stop-color="#0284c7"/>
+        <stop offset="100%" stop-color="#0f172a"/>
+      </radialGradient>
+
+      <radialGradient id={`${uniqueId}-node`} cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#e0f2fe"/>
+        <stop offset="45%" stop-color="#0ea5e9"/>
+        <stop offset="100%" stop-color="#1e3a8a"/>
+      </radialGradient>
+
+      <linearGradient id={`${uniqueId}-axon`} x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#0284c7"/>
+        <stop offset="50%" stop-color="#2563eb"/>
+        <stop offset="100%" stop-color="#0ea5e9"/>
+      </linearGradient>
+
+      <radialGradient id={`${uniqueId}-glow`} cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.32"/>
+        <stop offset="50%" stop-color="#0284c7" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Halo circular de soporte -->
+    <circle cx="300" cy="300" r="280" fill={`url(#${uniqueId}-glow)`}/>
+
+    <!-- 1. Arborización Dendrítica Exterior (12 Árboles Idénticos al Hero) -->
+    <g stroke={`url(#${uniqueId}-axon)`} stroke-linecap="round">
+      <path d="M 446 300 Q 475.16 302.34 485 300" stroke-width="3.2"/>
+      <path d="M 485 300 Q 510.37 294.33 530.1 287.52 M 530.1 287.52 L 544.97 289.46 M 485 300 Q 510.25 306.18 533.13 315.95 M 533.13 315.95 L 548.93 313.4" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 426.44 373 Q 454.23 392.16 465.41 395.5" stroke-width="3.2"/>
+      <path d="M 465.41 395.5 Q 494.04 404.47 517.68 409.05 M 517.68 409.05 L 529.59 418.17 M 465.41 395.5 Q 487.08 416.25 504.3 439.2 M 504.3 439.2 L 519.25 444.89" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 373 426.44 Q 385.55 452.86 392.5 460.21" stroke-width="3.2"/>
+      <path d="M 392.5 460.21 Q 410.1 479.35 425.86 493.03 M 425.86 493.03 L 431.61 506.88 M 392.5 460.21 Q 399.78 485.17 402.75 509.86 M 402.75 509.86 L 412.86 522.26" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 300 446 Q 297.3 479.64 300 491" stroke-width="3.2"/>
+      <path d="M 300 491 Q 306.55 520.28 314.4 543.04 M 314.4 543.04 L 312.46 557.91 M 300 491 Q 292.87 520.14 281.6 546.53 M 281.6 546.53 L 284.15 562.33" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 227 426.44 Q 210.4 450.52 207.5 460.21" stroke-width="3.2"/>
+      <path d="M 207.5 460.21 Q 199.73 485.02 195.76 505.51 M 195.76 505.51 L 186.64 517.42 M 207.5 460.21 Q 189.52 478.99 169.63 493.91 M 169.63 493.91 L 163.94 508.86" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 173.56 373 Q 143.08 387.49 134.59 395.5" stroke-width="3.2"/>
+      <path d="M 134.59 395.5 Q 112.51 415.81 96.72 434 M 96.72 434 L 82.87 439.75 M 134.59 395.5 Q 105.79 403.89 77.3 407.33 M 77.3 407.33 L 64.9 417.44" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 154 300 Q 124.84 297.66 115 300" stroke-width="3.2"/>
+      <path d="M 115 300 Q 89.63 305.67 69.9 312.48 M 69.9 312.48 L 55.03 310.54 M 115 300 Q 89.75 293.82 66.87 284.05 M 66.87 284.05 L 51.07 286.6" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 173.56 227 Q 145.77 207.84 134.59 204.5" stroke-width="3.2"/>
+      <path d="M 134.59 204.5 Q 105.96 195.53 82.32 190.95 M 82.32 190.95 L 70.41 181.83 M 134.59 204.5 Q 112.92 183.75 95.7 160.8 M 95.7 160.8 L 80.75 155.11" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 227 173.56 Q 214.45 147.14 207.5 139.79" stroke-width="3.2"/>
+      <path d="M 207.5 139.79 Q 189.9 120.65 174.14 106.97 M 174.14 106.97 L 168.39 93.12 M 207.5 139.79 Q 200.22 114.83 197.25 90.14 M 197.25 90.14 L 187.14 77.74" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 300 154 Q 302.7 120.36 300 109" stroke-width="3.2"/>
+      <path d="M 300 109 Q 293.45 79.72 285.6 56.96 M 285.6 56.96 L 287.54 42.09 M 300 109 Q 307.13 79.86 318.4 53.47 M 318.4 53.47 L 315.85 37.67" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 373 173.56 Q 389.6 149.48 392.5 139.79" stroke-width="3.2"/>
+      <path d="M 392.5 139.79 Q 400.27 114.98 404.24 94.49 M 404.24 94.49 L 413.36 82.58 M 392.5 139.79 Q 410.48 121.01 430.37 106.09 M 430.37 106.09 L 436.06 91.14" stroke-width="2.2" opacity="0.85"/>
+      <path d="M 426.44 227 Q 456.92 212.51 465.41 204.5" stroke-width="3.2"/>
+      <path d="M 465.41 204.5 Q 487.49 184.19 503.28 166 M 503.28 166 L 517.13 160.25 M 465.41 204.5 Q 494.21 196.11 522.7 192.67 M 522.7 192.67 L 535.1 182.56" stroke-width="2.2" opacity="0.85"/>
+    </g>
+
+    <!-- 2. Red Axónica Interna Idéntica al Hero -->
+    <g stroke={`url(#${uniqueId}-axon)`} stroke-width="2.8" stroke-linecap="round" opacity="0.75">
+      <line x1="300" y1="300" x2="365.82" y2="262"/>
+      <line x1="300" y1="300" x2="365.82" y2="338"/>
+      <line x1="300" y1="300" x2="300" y2="376"/>
+      <line x1="300" y1="300" x2="234.18" y2="338"/>
+      <line x1="300" y1="300" x2="234.18" y2="262"/>
+      <line x1="300" y1="300" x2="300" y2="224"/>
+      <line x1="365.82" y1="262" x2="365.82" y2="338"/>
+      <line x1="365.82" y1="262" x2="300" y2="376"/>
+      <line x1="365.82" y1="338" x2="300" y2="376"/>
+      <line x1="365.82" y1="338" x2="234.18" y2="338"/>
+      <line x1="300" y1="376" x2="234.18" y2="338"/>
+      <line x1="300" y1="376" x2="234.18" y2="262"/>
+      <line x1="234.18" y1="338" x2="234.18" y2="262"/>
+      <line x1="234.18" y1="338" x2="300" y2="224"/>
+      <line x1="234.18" y1="262" x2="300" y2="224"/>
+      <line x1="234.18" y1="262" x2="365.82" y2="262"/>
+      <line x1="300" y1="224" x2="365.82" y2="262"/>
+      <line x1="300" y1="224" x2="365.82" y2="338"/>
+      <line x1="365.82" y1="262" x2="446" y2="300"/>
+      <line x1="446" y1="300" x2="426.44" y2="373"/>
+      <line x1="365.82" y1="262" x2="426.44" y2="373"/>
+      <line x1="365.82" y1="338" x2="426.44" y2="373"/>
+      <line x1="426.44" y1="373" x2="373" y2="426.44"/>
+      <line x1="365.82" y1="338" x2="373" y2="426.44"/>
+      <line x1="373" y1="426.44" x2="300" y2="446"/>
+      <line x1="365.82" y1="338" x2="300" y2="446"/>
+      <line x1="300" y1="376" x2="300" y2="446"/>
+      <line x1="300" y1="446" x2="227" y2="426.44"/>
+      <line x1="300" y1="376" x2="227" y2="426.44"/>
+      <line x1="227" y1="426.44" x2="173.56" y2="373"/>
+      <line x1="300" y1="376" x2="173.56" y2="373"/>
+      <line x1="234.18" y1="338" x2="173.56" y2="373"/>
+      <line x1="173.56" y1="373" x2="154" y2="300"/>
+      <line x1="234.18" y1="338" x2="154" y2="300"/>
+      <line x1="154" y1="300" x2="173.56" y2="227"/>
+      <line x1="234.18" y1="338" x2="173.56" y2="227"/>
+      <line x1="234.18" y1="262" x2="173.56" y2="227"/>
+      <line x1="173.56" y1="227" x2="227" y2="173.56"/>
+      <line x1="234.18" y1="262" x2="227" y2="173.56"/>
+      <line x1="227" y1="173.56" x2="300" y2="154"/>
+      <line x1="234.18" y1="262" x2="300" y2="154"/>
+      <line x1="300" y1="224" x2="300" y2="154"/>
+      <line x1="300" y1="154" x2="373" y2="173.56"/>
+      <line x1="300" y1="224" x2="373" y2="173.56"/>
+      <line x1="373" y1="173.56" x2="426.44" y2="227"/>
+      <line x1="300" y1="224" x2="426.44" y2="227"/>
+      <line x1="365.82" y1="262" x2="426.44" y2="227"/>
+      <line x1="426.44" y1="227" x2="446" y2="300"/>
+    </g>
+
+    <!-- 3. Botones Sinápticos Terminales -->
+    <g fill="#00f0ff" stroke="#ffffff" stroke-width="1">
+      <circle cx="530.1" cy="287.52" r="3.2"/>
+      <circle cx="544.97" cy="289.46" r="2.4"/>
+      <circle cx="533.13" cy="315.95" r="3.2"/>
+      <circle cx="548.93" cy="313.4" r="2.4"/>
+      <circle cx="517.68" cy="409.05" r="3.2"/>
+      <circle cx="529.59" cy="418.17" r="2.4"/>
+      <circle cx="504.3" cy="439.2" r="3.2"/>
+      <circle cx="519.25" cy="444.89" r="2.4"/>
+      <circle cx="425.86" cy="493.03" r="3.2"/>
+      <circle cx="431.61" cy="506.88" r="2.4"/>
+      <circle cx="402.75" cy="509.86" r="3.2"/>
+      <circle cx="412.86" cy="522.26" r="2.4"/>
+      <circle cx="314.4" cy="543.04" r="3.2"/>
+      <circle cx="312.46" cy="557.91" r="2.4"/>
+      <circle cx="281.6" cy="546.53" r="3.2"/>
+      <circle cx="284.15" cy="562.33" r="2.4"/>
+      <circle cx="195.76" cy="505.51" r="3.2"/>
+      <circle cx="186.64" cy="517.42" r="2.4"/>
+      <circle cx="169.63" cy="493.91" r="3.2"/>
+      <circle cx="163.94" cy="508.86" r="2.4"/>
+      <circle cx="96.72" cy="434" r="3.2"/>
+      <circle cx="82.87" cy="439.75" r="2.4"/>
+      <circle cx="77.3" cy="407.33" r="3.2"/>
+      <circle cx="64.9" cy="417.44" r="2.4"/>
+      <circle cx="69.9" cy="312.48" r="3.2"/>
+      <circle cx="55.03" cy="310.54" r="2.4"/>
+      <circle cx="66.87" cy="284.05" r="3.2"/>
+      <circle cx="51.07" cy="286.6" r="2.4"/>
+      <circle cx="82.32" cy="190.95" r="3.2"/>
+      <circle cx="70.41" cy="181.83" r="2.4"/>
+      <circle cx="95.7" cy="160.8" r="3.2"/>
+      <circle cx="80.75" cy="155.11" r="2.4"/>
+      <circle cx="174.14" cy="106.97" r="3.2"/>
+      <circle cx="168.39" cy="93.12" r="2.4"/>
+      <circle cx="197.25" cy="90.14" r="3.2"/>
+      <circle cx="187.14" cy="77.74" r="2.4"/>
+      <circle cx="285.6" cy="56.96" r="3.2"/>
+      <circle cx="287.54" cy="42.09" r="2.4"/>
+      <circle cx="318.4" cy="53.47" r="3.2"/>
+      <circle cx="315.85" cy="37.67" r="2.4"/>
+      <circle cx="404.24" cy="94.49" r="3.2"/>
+      <circle cx="413.36" cy="82.58" r="2.4"/>
+      <circle cx="430.37" cy="106.09" r="3.2"/>
+      <circle cx="436.06" cy="91.14" r="2.4"/>
+      <circle cx="503.28" cy="166" r="3.2"/>
+      <circle cx="517.13" cy="160.25" r="2.4"/>
+      <circle cx="522.7" cy="192.67" r="3.2"/>
+      <circle cx="535.1" cy="182.56" r="2.4"/>
+    </g>
+
+    <!-- 4. Cuerpos Celulares (Somas) -->
+    <g stroke="#0284c7" stroke-width="2">
+      <circle cx="446" cy="300" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="426.44" cy="373" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="373" cy="426.44" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="300" cy="446" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="227" cy="426.44" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="173.56" cy="373" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="154" cy="300" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="173.56" cy="227" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="227" cy="173.56" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="300" cy="154" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="373" cy="173.56" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="426.44" cy="227" r="7.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="365.82" cy="262" r="9.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="365.82" cy="338" r="9.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="300" cy="376" r="9.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="234.18" cy="338" r="9.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="234.18" cy="262" r="9.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="300" cy="224" r="9.5" fill={`url(#${uniqueId}-node)`}/>
+      <circle cx="300" cy="300" r="15" fill={`url(#${uniqueId}-core)`} stroke-width="2.5"/>
+    </g>
+
+    <!-- Fotón Núcleo Central -->
+    <circle cx="300" cy="300" r="5.5" fill="#ffffff" opacity="0.95"/>
+  </svg>
+</div>

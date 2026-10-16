@@ -1,5 +1,6 @@
 ---
 import { ArrowUpRight, Menu, X } from 'lucide-react';
+import BioNeuralLogo from './BioNeuralLogo.astro';
 
 interface Props {
   theme?: 'dark' | 'light';
@@ -32,18 +33,14 @@ const isActive = (href: string) => {
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-20">
       
-      <!-- Logo Corporativo Oficial con Foto 1 (Símbolo de Red en Engranaje Bronce) -->
+      <!-- Logo Corporativo Oficial Bio-Neuronal (SVG Vectorial) -->
       <a href="/" class="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-lg p-1" aria-label="Nixelaos Tech Inicio">
         <div class={`relative w-11 h-11 flex items-center justify-center p-0.5 rounded-xl border transition-colors shadow-inner ${
           theme === 'light'
-            ? 'bg-slate-100 border-slate-200 group-hover:border-cyan-500/50'
+            ? 'bg-slate-100/80 border-slate-200 group-hover:border-cyan-500/50'
             : 'bg-cyan-950/40 border-cyan-800/40 group-hover:border-cyan-500/50'
         }`}>
-          <img
-            src="/images/logo.png"
-            alt="Nixelaos Logo"
-            class="w-full h-full object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_0_10px_rgba(205,127,50,0.4)]"
-          />
+          <BioNeuralLogo size="w-9 h-9" animate={true} />
         </div>
         <div class="flex flex-col">
           <span class={`text-xl font-bold tracking-tight transition-colors font-mono ${
