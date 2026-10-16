@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Red Bio-Neuronal Móvil 60FPS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="h-full flex flex-col font-sans overflow-hidden bg-slate-950 select-none">
+
+    <!-- HUD SUPERIOR LIGERO -->
+    <header
+        class="px-5 py-3 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md flex items-center justify-between z-30">
+        <div class="flex items-center gap-2.5">
+            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></div>
+            <span class="text-xs font-bold font-mono text-cyan-300 tracking-wider">NEURAL FLOW: 60 FPS</span>
+        </div>
+        <button id="btn-touch-burst"
+            class="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono active:scale-95 transition-transform">
+            PULSO RÁPIDO
+        </button>
+    </header>
+
+    <!-- ESCENARIO CENTRAL -->
+    <main class="flex-1 relative flex items-center justify-center p-2 overflow-hidden touch-none" id="touch-stage">
+
+        <!-- Contenedor cuadrado responsivo -->
+        <div id="interactive-card" class="relative w-full max-w-[420px] aspect-square flex items-center justify-center">
+
+            <!-- CAPA 1: SVG ESTÁTICO (Renderizado 1 sola vez, 0 mutaciones en el DOM) -->
+            <svg id="base-svg" viewBox="0 0 600 600" class="w-full h-full absolute inset-0 pointer-events-none">
+                <defs>
+                    <linearGradient id="mAxonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#0284c7" />
+                        <stop offset="60%" stop-color="#0ea5e9" />
+                        <stop offset="100%" stop-color="#00f0ff" />
+                    </linearGradient>
+                    <radialGradient id="mNodeBase" cx="35%" cy="35%" r="65%">
+                        <stop offset="0%" stop-color="#e0f2fe" />
+                        <stop offset="60%" stop-color="#0284c7" />
+                        <stop offset="100%" stop-color="#082f49" />
+                    </radialGradient>
+                </defs>
+
+                <!-- Red axónica interna -->
+                <g id="svg-axons" stroke="url(#mAxonGrad)" stroke-linecap="round" fill="none" opacity="0.45"></g>
+                <!-- Arborización dendrítica ramificada exterior -->
+                <g id="svg-dendrites" stroke="url(#mAxonGrad)" stroke-linecap="round" fill="none"></g>
+                <!-- Nodos base -->
+                <g id="svg-nodes" fill="url(#mNodeBase)" stroke="#0ea5e9" stroke-width="1.8"></g>
+                <!-- Puntas terminales -->
+                <g id="svg-tips" fill="#00f0ff"></g>
+            </svg>
+
+            <!-- CAPA 2: CANVAS DE ALTO RENDIMIENTO (Pulsos, palpitación y microchispas) -->
+            <canvas id="fast-canvas" class="w-full h-full absolute inset-0 pointer-events-none"></canvas>
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            const CENTER = { x: 300, y: 300 };
+            const SVG_NS = "http://www.w3.org/2000/svg";
+
+            // Elementos
+            const touchStage = document.getElementById("touch-stage");
+            const interactiveCard = document.getElementById("interactive-card");
+            const svgAxons = document.getElementById("svg-axons");
+            const svgDendrites = document.getElementById("svg-dendrites");
+            const svgNodes = document.getElementById("svg-nodes");
+            const svgTips = document.getElementById("svg-tips");
+            const canvas = document.getElementById("fast-canvas");
+            const ctx = canvas.getContext("2d");
+
+            // 1. TOPOLOGÍA Y NODOS
+            const nodes = [];
+            const axonLines = [];
+            const neighborsMap = {};
+            const dendriticArbors = [];
+
+            function addNeighbor(a, b) {
+                if (!neighborsMap[a]) neighborsMap[a] = [];
+                if (!neighborsMap[b]) neighborsMap[b] = [];
+                if (!neighborsMap[a].includes(b)) neighborsMap[a].push(b);
+                if (!neighborsMap[b].includes(a)) neighborsMap[b].push(a);
+            }
+
+            // Núcleo
+            nodes.push({ id: 0, x: CENTER.x, y: CENTER.y, baseR: 14, excitation: 0, isCore: true });
+
+            // Anillo Interno (6)
+            const innerCount = 6;
+            const innerR = 74;
+            for (let i = 0; i < innerCount; i++) {
+                const a = (i * 2 * Math.PI) / innerCount - Math.PI / 6;
+                nodes.push({ id: 1 + i, x: CENTER.x + innerR * Math.cos(a), y: CENTER.y + innerR * Math.sin(a), baseR: 8.5, excitation: 0 });
+            }
+
+            // Anillo Exterior (12)
+            const outerCount = 12;
+            const outerR = 144;
+            for (let i = 0; i < outerCount; i++) {
+                const a = (i * 2 * Math.PI) / outerCount;
+                nodes.push({ id: 7 + i, x: CENTER.x + outerR * Math.cos(a), y: CENTER.y + outerR * Math.sin(a), baseR: 7.0, excitation: 0, isOuter: true });
+            }
+
+            // Conexiones de red
+            for (let i = 1; i <= 6; i++) {
+                axonLines.push({ from: 0, to: i });
+                addNeighbor(0, i);
+                const next = i === 6 ? 1 : i + 1;
+                const diag = ((i + 1) % 6) + 1;
+                axonLines.push({ from: i, to: next });
+                axonLines.push({ from: i, to: diag });
+                addNeighbor(i, next);
+                addNeighbor(i, diag);
+            }
+
+            for (let i = 0; i < 12; i++) {
+                const outId = 7 + i;
+                const inId = 1 + (Math.floor(i / 2) % 6);
+                const nextInId = inId === 6 ? 1 : inId + 1;
+                axonLines.push({ from: inId, to: outId });
+                addNeighbor(inId, outId);
+                if (i % 2 === 1) {
+                    axonLines.push({ from: nextInId, to: outId });
+                    addNeighbor(nextInId, outId);
+                }
+                const nextOutId = 7 + ((i + 1) % 12);
+                axonLines.push({ from: outId, to: nextOutId });
+                addNeighbor(outId, nextOutId);
+            }
+
+            // 2. CONSTRUCCIÓN DEL SVG ESTÁTICO (UNA SOLA VEZ)
+            // Dibujar líneas axónicas
+            axonLines.forEach(l => {
+                const line = document.createElementNS(SVG_NS, "line");
+                line.setAttribute("x1", nodes[l.from].x.toFixed(1));
+                line.setAttribute("y1", nodes[l.from].y.toFixed(1));
+                line.setAttribute("x2", nodes[l.to].x.toFixed(1));
+                line.setAttribute("y2", nodes[l.to].y.toFixed(1));
+                line.setAttribute("stroke-width", "2");
+                svgAxons.appendChild(line);
+            });
+
+            // Dibujar arborización dendrítica dicotómica
+            for (let i = 0; i < 12; i++) {
+                const rootNode = nodes[7 + i];
+                const baseA = (i * 2 * Math.PI) / 12;
+                const treeSegments = [];
+
+                const trunkLen = 38 + (i % 3) * 6;
+                const secLen = 28 + (i % 2) * 5;
+                const twigLen = 20 + (i % 2) * 4;
+
+                const curveBias = (i % 2 === 0 ? 1 : -1) * 0.12;
+                const cp1X = rootNode.x + (trunkLen * 0.5) * Math.cos(baseA + curveBias);
+                const cp1Y = rootNode.y + (trunkLen * 0.5) * Math.sin(baseA + curveBias);
+                const fork1X = rootNode.x + trunkLen * Math.cos(baseA + curveBias * 0.4);
+                const fork1Y = rootNode.y + trunkLen * Math.sin(baseA + curveBias * 0.4);
+
+                treeSegments.push({ from: { x: rootNode.x, y: rootNode.y }, cp: { x: cp1X, y: cp1Y }, to: { x: fork1X, y: fork1Y } });
+
+                const aLeft = baseA - 0.28;
+                const fork2LX = fork1X + secLen * Math.cos(aLeft);
+                const fork2LY = fork1Y + secLen * Math.sin(aLeft);
+                const aRight = baseA + 0.30;
+                const fork2RX = fork1X + secLen * Math.cos(aRight);
+                const fork2RY = fork1Y + secLen * Math.sin(aRight);
+
+                treeSegments.push(
+                    { from: { x: fork1X, y: fork1Y }, to: { x: fork2LX, y: fork2LY } },
+                    { from: { x: fork1X, y: fork1Y }, to: { x: fork2RX, y: fork2RY } }
+                );
+
+                // Terminales y espinas
+                const endL1X = fork2LX + twigLen * Math.cos(aLeft - 0.18);
+                const endL1Y = fork2LY + twigLen * Math.sin(aLeft - 0.18);
+                const endL2X = fork2LX + (twigLen * 0.85) * Math.cos(aLeft + 0.22);
+                const endL2Y = fork2LY + (twigLen * 0.85) * Math.sin(aLeft + 0.22);
+                const spineLX = fork2LX + 13 * Math.cos(aLeft - 0.55);
+                const spineLY = fork2LY + 13 * Math.sin(aLeft - 0.55);
+
+                const endR1X = fork2RX + (twigLen * 0.85) * Math.cos(aRight - 0.20);
+                const endR1Y = fork2RX + (twigLen * 0.85) * Math.sin(aRight - 0.20);
+                const endR2X = fork2RX + twigLen * Math.cos(aRight + 0.24);
+                const endR2Y = fork2RX + twigLen * Math.sin(aRight + 0.24);
+                const spineRX = fork2RX + 13 * Math.cos(aRight + 0.55);
+                const spineRY = fork2RX + 13 * Math.sin(aRight + 0.55);
+
+                treeSegments.push(
+                    { from: { x: fork2LX, y: fork2LY }, to: { x: endL1X, y: endL1Y }, isTerminal: true },
+                    { from: { x: fork2LX, y: fork2LY }, to: { x: endL2X, y: endL2Y }, isTerminal: true },
+                    { from: { x: fork2LX, y: fork2LY }, to: { x: spineLX, y: spineLY }, isTerminal: true },
+                    { from: { x: fork2RX, y: fork2RY }, to: { x: endR1X, y: endR1Y }, isTerminal: true },
+                    { from: { x: fork2RX, y: fork2RY }, to: { x: endR2X, y: endR2Y }, isTerminal: true },
+                    { from: { x: fork2RX, y: fork2RY }, to: { x: spineRX, y: spineRY }, isTerminal: true }
+                );
+
+                dendriticArbors.push({ rootId: rootNode.id, segments: treeSegments });
+
+                // Trazado en SVG
+                const pMain = document.createElementNS(SVG_NS, "path");
+                pMain.setAttribute("d", `M ${rootNode.x.toFixed(1)} ${rootNode.y.toFixed(1)} Q ${cp1X.toFixed(1)} ${cp1Y.toFixed(1)} ${fork1X.toFixed(1)} ${fork1Y.toFixed(1)}`);
+                pMain.setAttribute("stroke-width", "3.0");
+                svgDendrites.appendChild(pMain);
+
+                const pSec = document.createElementNS(SVG_NS, "path");
+                pSec.setAttribute("d", `M ${fork1X.toFixed(1)} ${fork1Y.toFixed(1)} L ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} M ${fork1X.toFixed(1)} ${fork1Y.toFixed(1)} L ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)}`);
+                pSec.setAttribute("stroke-width", "2.0");
+                svgDendrites.appendChild(pSec);
+
+                const pTwigs = document.createElementNS(SVG_NS, "path");
+                pTwigs.setAttribute("d",
+                    `M ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} L ${endL1X.toFixed(1)} ${endL1Y.toFixed(1)} ` +
+                    `M ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} L ${endL2X.toFixed(1)} ${endL2Y.toFixed(1)} ` +
+                    `M ${fork2LX.toFixed(1)} ${fork2LY.toFixed(1)} L ${spineLX.toFixed(1)} ${spineLY.toFixed(1)} ` +
+                    `M ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)} L ${endR1X.toFixed(1)} ${endR1Y.toFixed(1)} ` +
+                    `M ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)} L ${endR2X.toFixed(1)} ${endR2Y.toFixed(1)} ` +
+                    `M ${fork2RX.toFixed(1)} ${fork2RY.toFixed(1)} L ${spineRX.toFixed(1)} ${spineRY.toFixed(1)}`
+                );
+                pTwigs.setAttribute("stroke-width", "1.1");
+                pTwigs.setAttribute("opacity", "0.85");
+                svgDendrites.appendChild(pTwigs);
+
+                // Bulbos terminales
+                [{ x: endL1X, y: endL1Y }, { x: endL2X, y: endL2Y }, { x: spineLX, y: spineLY }, { x: endR1X, y: endR1Y }, { x: endR2X, y: endR2Y }, { x: spineRX, y: spineRY }].forEach(tp => {
+                    const c = document.createElementNS(SVG_NS, "circle");
+                    c.setAttribute("cx", tp.x.toFixed(1));
+                    c.setAttribute("cy", tp.y.toFixed(1));
+                    c.setAttribute("r", "2.2");
+                    svgTips.appendChild(c);
+                });
+            }
+
+            // Dibujar nodos estáticos
+            nodes.forEach(n => {
+                const c = document.createElementNS(SVG_NS, "circle");
+                c.setAttribute("cx", n.x.toFixed(1));
+                c.setAttribute("cy", n.y.toFixed(1));
+                c.setAttribute("r", n.baseR.toString());
+                svgNodes.appendChild(c);
+            });
+
+            // 3. MOTOR DE ALTO RENDIMIENTO EN CANVAS 2D
+            const pulses = [];
+            const dendriticSurges = [];
+            const microArcs = [];
+
+            // Control de resolución estricto para móvil (máximo 2x para no saturar memoria)
+            let scale = 1;
+            function resizeCanvas() {
+                const rect = interactiveCard.getBoundingClientRect();
+                const dpr = Math.min(window.devicePixelRatio || 1, 2); // TOPE CRÍTICO
+                canvas.width = Math.round(rect.width * dpr);
+                canvas.height = Math.round(rect.height * dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                scale = rect.width / 600;
+            }
+            resizeCanvas();
+            window.addEventListener("resize", resizeCanvas);
+
+            function spawnPulse(fromId, toId, hops) {
+                if (pulses.length >= 18) return; // Límite para móvil
+                pulses.push({ fromId, toId, progress: 0, speed: 0.024 + Math.random() * 0.008, hopsRemaining: hops });
+            }
+
+            function spawnDendrites(outerId) {
+                const arbor = dendriticArbors.find(a => a.rootId === outerId);
+                if (!arbor) return;
+                arbor.segments.forEach((seg, idx) => {
+                    if (dendriticSurges.length < 22) {
+                        dendriticSurges.push({ segment: seg, progress: 0, speed: 0.028 + (idx % 2) * 0.008 });
+                    }
+                });
+            }
+
+            function triggerLocalBurst(nodeId) {
+                const node = nodes[nodeId] || nodes[0];
+                node.excitation = 1.8;
+                const nbs = neighborsMap[node.id] || [];
+                nbs.forEach(tid => spawnPulse(node.id, tid, 3));
+                if (node.isOuter) spawnDendrites(node.id);
+            }
+
+            document.getElementById("btn-touch-burst").addEventListener("click", () => triggerLocalBurst(0));
+
+            // Detección de toque táctil ágil sin lag
+            touchStage.addEventListener("pointerdown", (e) => {
+                const rect = interactiveCard.getBoundingClientRect();
+                const touchX = (e.clientX - rect.left) * (600 / rect.width);
+                const touchY = (e.clientY - rect.top) * (600 / rect.height);
+
+                let closest = nodes[0];
+                let minDist = 99999;
+                nodes.forEach(n => {
+                    const d = Math.hypot(n.x - touchX, n.y - touchY);
+                    if (d < minDist) { minDist = d; closest = n; }
+                });
+
+                triggerLocalBurst(minDist < 80 ? closest.id : 0);
+            });
+
+            // 4. BUCLE A 60 FPS ULTRA OPTIMIZADO (CERO SHADOWBLUR)
+            let lastTime = performance.now();
+            let lastEmission = performance.now();
+
+            function loop(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+                const w = interactiveCard.clientWidth;
+
+                ctx.clearRect(0, 0, w, w);
+
+                // A. Emisión continua suave
+                if (now - lastEmission >= 260) {
+                    lastEmission = now;
+                    const origin = nodes[Math.floor(Math.random() * nodes.length)];
+                    const nbs = neighborsMap[origin.id] || [];
+                    if (nbs.length > 0) {
+                        spawnPulse(origin.id, nbs[Math.floor(Math.random() * nbs.length)], Math.floor(2 + Math.random() * 3));
+                    }
+                }
+
+                // B. Palpitación de nodos en Canvas (rápida, sin tocar el DOM)
+                nodes.forEach(n => {
+                    if (n.excitation > 0.02) {
+                        n.excitation *= 0.92;
+                        const px = n.x * scale;
+                        const py = n.y * scale;
+                        const r = (n.baseR * (1 + n.excitation * 0.7)) * scale;
+
+                        // Halo suave dibujado con círculos concéntricos de transparencia
+                        ctx.beginPath();
+                        ctx.arc(px, py, r * 1.5, 0, Math.PI * 2);
+                        ctx.fillStyle = "rgba(0, 240, 255, " + (n.excitation * 0.25).toFixed(2) + ")";
+                        ctx.fill();
+
+                        // Centro reactivo iluminado
+                        ctx.beginPath();
+                        ctx.arc(px, py, r, 0, Math.PI * 2);
+                        ctx.fillStyle = "rgba(0, 240, 255, " + (n.excitation * 0.75).toFixed(2) + ")";
+                        ctx.fill();
+                    } else {
+                        n.excitation = 0;
+                    }
+                });
+
+                // C. Pulsos axónicos (Partículas ligeras)
+                ctx.fillStyle = "#ffffff";
+                for (let i = pulses.length - 1; i >= 0; i--) {
+                    const p = pulses[i];
+                    p.progress += p.speed;
+
+                    const nF = nodes[p.fromId];
+                    const nT = nodes[p.toId];
+                    const px = (nF.x + (nT.x - nF.x) * p.progress) * scale;
+                    const py = (nF.y + (nT.y - nF.y) * p.progress) * scale;
+
+                    // Halo falso con alpha (extremadamente rápido en GPU)
+                    ctx.beginPath();
+                    ctx.arc(px, py, 5.5, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(0, 240, 255, 0.4)";
+                    ctx.fill();
+
+                    // Núcleo blanco
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2.8, 0, Math.PI * 2);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fill();
+
+                    if (p.progress >= 1.0) {
+                        nT.excitation = Math.min(nT.excitation + 0.7, 1.6);
+
+                        if (p.hopsRemaining > 1) {
+                            const elig = (neighborsMap[nT.id] || []).filter(id => id !== p.fromId);
+                            if (nT.isOuter && Math.random() < 0.45) {
+                                spawnDendrites(nT.id);
+                            } else if (elig.length > 0) {
+                                spawnPulse(nT.id, elig[Math.floor(Math.random() * elig.length)], p.hopsRemaining - 1);
+                            }
+                        } else if (nT.isOuter && Math.random() < 0.6) {
+                            spawnDendrites(nT.id);
+                        }
+                        pulses.splice(i, 1);
+                    }
+                }
+
+                // D. Corriente en las dendritas
+                for (let i = dendriticSurges.length - 1; i >= 0; i--) {
+                    const ds = dendriticSurges[i];
+                    ds.progress += ds.speed;
+                    const s = ds.segment;
+                    let px, py;
+
+                    if (s.cp) {
+                        const invT = 1 - ds.progress;
+                        px = invT * invT * s.from.x + 2 * invT * ds.progress * s.cp.x + ds.progress * ds.progress * s.to.x;
+                        py = invT * invT * s.from.y + 2 * invT * ds.progress * s.cp.y + ds.progress * ds.progress * s.to.y;
+                    } else {
+                        px = s.from.x + (s.to.x - s.from.x) * ds.progress;
+                        py = s.from.y + (s.to.y - s.from.y) * ds.progress;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(px * scale, py * scale, 2.4, 0, Math.PI * 2);
+                    ctx.fillStyle = "#00f0ff";
+                    ctx.fill();
+
+                    if (ds.progress >= 1.0) {
+                        if (s.isTerminal) {
+                            const a = Math.random() * Math.PI * 2;
+                            const r = 8 + Math.random() * 12;
+                            microArcs.push({
+                                x1: px * scale, y1: py * scale,
+                                x2: px * scale + Math.cos(a) * r, y2: py * scale + Math.sin(a) * r,
+                                life: 1.0
+                            });
+                        }
+                        dendriticSurges.splice(i, 1);
+                    }
+                }
+
+                // E. Micro-arcos terminales
+                ctx.lineWidth = 1.4;
+                ctx.strokeStyle = "#00f0ff";
+                for (let i = microArcs.length - 1; i >= 0; i--) {
+                    const ma = microArcs[i];
+                    ma.life -= dt * 4.5;
+                    if (ma.life <= 0) { microArcs.splice(i, 1); continue; }
+
+                    ctx.globalAlpha = ma.life;
+                    ctx.beginPath();
+                    ctx.moveTo(ma.x1, ma.y1);
+                    ctx.lineTo(ma.x2, ma.y2);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1.0;
+
+                requestAnimationFrame(loop);
+            }
+
+            requestAnimationFrame(loop);
+        })();
+    </script>
+</body>
+
+</html>
