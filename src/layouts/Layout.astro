@@ -62,10 +62,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://nixelaos
     <PageLoader />
 
     {theme === 'light' ? (
-      <!-- Fondo Blanco Limpio con Retícula Micro-Electrónica y Resplandor Ambiental Sutil -->
+      <!-- Fondo Blanco Limpio con Resplandor Ambiental Sutil -->
       <div class="fixed inset-0 overflow-hidden pointer-events-none -z-20 bg-white">
-        <!-- Retícula Micro-Electrónica Lab -->
-        <div class="absolute inset-0 bg-[radial-gradient(#0284c7_1.2px,transparent_1.2px)] [background-size:28px_28px] opacity-15"></div>
         <!-- Resplandores Atmosféricos de Laboratorio -->
         <div class="absolute -top-24 -left-20 w-[650px] h-[550px] bg-gradient-to-tr from-cyan-200/35 via-sky-100/30 to-transparent blur-[120px] rounded-full"></div>
         <div class="absolute top-1/3 -right-24 w-[600px] h-[500px] bg-gradient-to-bl from-blue-100/30 via-cyan-100/25 to-transparent blur-[130px] rounded-full"></div>
